@@ -2,8 +2,42 @@
     "name": "d3strukt0r/craft-blueprint",
     "description": "A CraftCMS blueprint",
     "type": "project",
-    "keywords": ["craft", "craftcms", "blueprint", "template"],
-    "homepage": "",
+    "keywords": [
+        "craft",
+        "craftcms",
+        "blueprint",
+        "template"
+    ],
+    "homepage": "https://github.com/D3strukt0r/craft-blueprint",
+    "license": [
+        "GPL-3.0-or-later"
+    ],
+    "authors": [
+        {
+            "name": "Manuele Vaccari",
+            "email": "manuele.vaccari@gmail.com",
+            "homepage": "https://github.com/D3strukt0r",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "manuele.vaccari@gmail.com",
+        "issues": "https://github.com/D3strukt0r/craft-blueprint/issues",
+        "forum": "https://github.com/D3strukt0r/test/discussions",
+        "wiki": "https://github.com/D3strukt0r/craft-blueprint/wiki",
+        "source": "https://github.com/D3strukt0r/craft-blueprint",
+        "docs": "https://github.com/D3strukt0r/craft-blueprint"
+    },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/D3strukt0r"
+        },
+        {
+            "type": "patreon",
+            "url": "https://www.patreon.com/d3strukt0r"
+        }
+    ],
     "require": {
         "craftcms/cms": "^3.6.4",
         "vlucas/phpdotenv": "^3.4.0"
@@ -18,14 +52,24 @@
     },
     "config": {
         "sort-packages": true,
-        "optimize-autoloader": true,
-        "platform": {
-            "php": "7.2.5"
-        }
+        "optimize-autoloader": true
     },
     "scripts": {
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ]
+    },
+    "archive": {
+        "exclude": [
+            "./docker",
+            "/.github",
+            "/.idea",
+            "/.vscode",
+            ".editorconfig",
+            ".gitattributes",
+            ".gitignore",
+            "*.md",
+            "Dockerfile"
         ]
     }
 }
