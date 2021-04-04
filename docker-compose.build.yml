@@ -1,0 +1,21 @@
+version: '3.4'
+
+services:
+  php:
+    build:
+      context: .
+      target: php
+      cache_from:
+        - ${PHP_IMAGE:?PHP_IMAGE is not set or empty}
+    image: ${PHP_IMAGE:?PHP_IMAGE is not set or empty}
+
+  nginx:
+    build:
+      context: .
+      target: nginx
+      cache_from:
+        - ${PHP_IMAGE:?PHP_IMAGE is not set or empty}
+        - ${NGINX_IMAGE:?NGINX_IMAGE is not set or empty}
+    image: ${NGINX_IMAGE:?NGINX_IMAGE is not set or empty}
+    depends_on:
+      - php

@@ -1,5 +1,5 @@
 {
-    "name": "d3strukt0r/craft-blueprint",
+    "name": "d3strukt0r/craftcms-blueprint",
     "description": "A CraftCMS blueprint",
     "type": "project",
     "keywords": [
@@ -8,7 +8,7 @@
         "blueprint",
         "template"
     ],
-    "homepage": "https://github.com/D3strukt0r/craft-blueprint",
+    "homepage": "https://github.com/D3strukt0r/craftcms-blueprint",
     "license": [
         "GPL-3.0-or-later"
     ],
@@ -22,11 +22,11 @@
     ],
     "support": {
         "email": "manuele.vaccari@gmail.com",
-        "issues": "https://github.com/D3strukt0r/craft-blueprint/issues",
-        "forum": "https://github.com/D3strukt0r/test/discussions",
-        "wiki": "https://github.com/D3strukt0r/craft-blueprint/wiki",
-        "source": "https://github.com/D3strukt0r/craft-blueprint",
-        "docs": "https://github.com/D3strukt0r/craft-blueprint"
+        "issues": "https://github.com/D3strukt0r/craftcms-blueprint/issues",
+        "forum": "https://github.com/D3strukt0r/craftcms-blueprint/discussions",
+        "wiki": "https://github.com/D3strukt0r/craftcms-blueprint/wiki",
+        "source": "https://github.com/D3strukt0r/craftcms-blueprint",
+        "docs": "https://github.com/D3strukt0r/craftcms-blueprint"
     },
     "funding": [
         {
@@ -69,7 +69,7 @@
             ".gitattributes",
             ".gitignore",
             "*.md",
-            "Dockerfile"
+          "Dockerfile.old"
         ]
     }
 }

@@ -1,0 +1,112 @@
+version: '3.4'
+
+services:
+  db:
+    image: mariadb:latest
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: [ 'CMD', 'mysqladmin', 'ping', '--user=dbUser', '--password=dbPassword' ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - mysql-dev:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: dbAdminPassword
+      MYSQL_USER: dbUser
+      MYSQL_PASSWORD: dbPassword
+      MYSQL_DATABASE: dbApp
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    depends_on:
+      - db
+    ports:
+      - 81:80
+    environment:
+      UPLOAD_LIMIT: 100M
+      PMA_HOST: db
+
+  redis:
+    image: redis:latest
+    command: redis-server --appendonly yes --requirepass redisPassword
+    volumes:
+      - redis-dev:/data
+
+  phpredisadmin:
+    image: erikdubbelboer/phpredisadmin:latest
+    environment:
+      REDIS_1_HOST: redis
+      REDIS_1_NAME: redisApp
+      REDIS_1_AUTH: redisPassword
+    depends_on:
+      - redis
+    ports:
+      - 82:80
+
+  php:
+    build:
+      context: .
+      target: php-dev
+    healthcheck:
+      start_period: 1m40s
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app:rw,cached
+    environment:
+      # PHP Settings
+      PHP_MAX_EXECUTION_TIME: 0
+
+      # Craft general settings
+      ENVIRONMENT: dev # dev, staging, production
+      APP_ID: CraftCMS--224c362b-5476-42f8-8c5b-1742fa24e4d5
+      SECURITY_KEY: oA6-oxNqj2xtG1lTw9b6T6NOE9_SaEFz
+
+      # Craft database settings
+      DB_DRIVER: mysql
+      DB_SERVER: db
+      #DB_PORT: 3306
+      DB_USER: dbUser
+      DB_PASSWORD: dbPassword
+      DB_DATABASE: dbApp
+
+      # URL & path settings
+      ASSETS_URL: http://localhost/assets
+      SITE_URL: http://localhost
+
+      # Craft & Plugin Licenses
+      # LICENSE_KEY:
+
+      # Redis settings
+      REDIS_HOSTNAME: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redisPassword
+      REDIS_DEFAULT_DB: 0
+      REDIS_CRAFT_DB: 3
+
+      # Google Analytics settings
+      # GA_TRACKING_ID:
+
+  nginx:
+    build:
+      context: .
+      target: nginx
+    healthcheck:
+      test: test -e /var/run/nginx.pid || exit 1
+    depends_on:
+      - php
+    ports:
+      - 80:80
+      # - 443:443
+    volumes:
+      - ./web:/app/web:ro
+    # environment:
+    #   USE_HTTPS: 'true'
+
+volumes:
+  mysql-dev:
+  redis-dev:
