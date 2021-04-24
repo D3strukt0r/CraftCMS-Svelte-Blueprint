@@ -69,7 +69,6 @@
       <path value="$PROJECT_DIR$/vendor/laminas/laminas-feed" />
       <path value="$PROJECT_DIR$/vendor/laminas/laminas-stdlib" />
       <path value="$PROJECT_DIR$/vendor/laminas/laminas-escaper" />
-      <path value="$PROJECT_DIR$/vendor/dnoegel/php-xdg-base-dir" />
       <path value="$PROJECT_DIR$/vendor/vlucas/phpdotenv" />
       <path value="$PROJECT_DIR$/vendor/elvanto/litemoji" />
       <path value="$PROJECT_DIR$/vendor/egulias/email-validator" />
@@ -85,6 +84,32 @@
       <path value="$PROJECT_DIR$/vendor/voku/stringy" />
       <path value="$PROJECT_DIR$/vendor/voku/anti-xss" />
       <path value="$PROJECT_DIR$/vendor/voku/portable-ascii" />
+      <path value="$PROJECT_DIR$/vendor/cpliakas/git-wrapper" />
+      <path value="$PROJECT_DIR$/vendor/nette/utils" />
+      <path value="$PROJECT_DIR$/vendor/putyourlightson/craft-blitz" />
+      <path value="$PROJECT_DIR$/vendor/putyourlightson/craft-log-to-file" />
+      <path value="$PROJECT_DIR$/vendor/psr/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/vendor/percipioglobal/craft-password-policy" />
+      <path value="$PROJECT_DIR$/vendor/ostark/craft-async-queue" />
+      <path value="$PROJECT_DIR$/vendor/mutation/translate" />
+      <path value="$PROJECT_DIR$/vendor/mmikkel/cp-field-inspect" />
+      <path value="$PROJECT_DIR$/vendor/craftcms/redactor" />
+      <path value="$PROJECT_DIR$/vendor/larapack/dd" />
+      <path value="$PROJECT_DIR$/vendor/studioespresso/craft-dumper" />
+      <path value="$PROJECT_DIR$/vendor/verbb/base" />
+      <path value="$PROJECT_DIR$/vendor/verbb/navigation" />
+      <path value="$PROJECT_DIR$/vendor/davechild/textstatistics" />
+      <path value="$PROJECT_DIR$/vendor/php-science/textrank" />
+      <path value="$PROJECT_DIR$/vendor/nystudio107/craft-plugin-manifest" />
+      <path value="$PROJECT_DIR$/vendor/nystudio107/craft-seomatic" />
+      <path value="$PROJECT_DIR$/vendor/sunra/php-simple-html-dom-parser" />
+      <path value="$PROJECT_DIR$/vendor/jean85/pretty-package-versions" />
+      <path value="$PROJECT_DIR$/vendor/league/csv" />
+      <path value="$PROJECT_DIR$/vendor/nystudio107/craft-retour" />
+      <path value="$PROJECT_DIR$/vendor/liip/rmt" />
+      <path value="$PROJECT_DIR$/vendor/vierbergenlars/php-semver" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.0">

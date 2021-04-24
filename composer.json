@@ -10,7 +10,7 @@
     ],
     "homepage": "https://github.com/D3strukt0r/craftcms-blueprint",
     "license": [
-        "GPL-3.0-or-later"
+        "MIT"
     ],
     "authors": [
         {
@@ -40,9 +40,20 @@
     ],
     "require": {
         "craftcms/cms": "^3.6.4",
-        "vlucas/phpdotenv": "^3.4.0"
+        "craftcms/redactor": "^2",
+        "mmikkel/cp-field-inspect": "^1",
+        "mutation/translate": "^2",
+        "nystudio107/craft-retour": "^3",
+        "nystudio107/craft-seomatic": "^3",
+        "ostark/craft-async-queue": "^2",
+        "percipioglobal/craft-password-policy": "^1",
+        "putyourlightson/craft-blitz": "^3",
+        "studioespresso/craft-dumper": "^2",
+        "verbb/navigation": "^1",
+        "vlucas/phpdotenv": "^3"
     },
     "require-dev": {
+        "liip/rmt": "^1",
         "yiisoft/yii2-shell": "^2.0.3"
     },
     "autoload": {
@@ -68,8 +79,7 @@
             ".editorconfig",
             ".gitattributes",
             ".gitignore",
-            "*.md",
-          "Dockerfile.old"
+            "*.md"
         ]
     }
 }
