@@ -47,7 +47,7 @@ services:
   php:
     build:
       context: .
-      target: php
+      target: app-php
     healthcheck:
       start_period: 1m40s
     depends_on:
@@ -94,7 +94,7 @@ services:
   nginx:
     build:
       context: .
-      target: nginx
+      target: app-nginx
     healthcheck:
       test: test -e /var/run/nginx.pid || exit 1
     depends_on:

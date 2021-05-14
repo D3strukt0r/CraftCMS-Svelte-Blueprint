@@ -49,14 +49,17 @@ services:
   php:
     build:
       context: .
-      target: php-dev
+      target: app-php-dev
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
     healthcheck:
       start_period: 1m40s
     depends_on:
       - db
       - redis
     volumes:
-      - .:/app:rw,cached
+      - .:/var/www
     environment:
       # PHP Settings
       PHP_MAX_EXECUTION_TIME: 0
@@ -94,7 +97,10 @@ services:
   nginx:
     build:
       context: .
-      target: nginx
+      target: app-nginx
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
     healthcheck:
       test: test -e /var/run/nginx.pid || exit 1
     depends_on:
@@ -103,7 +109,7 @@ services:
       - 80:80
       # - 443:443
     volumes:
-      - ./web:/app/web:ro
+      - ./web:/var/www/web:ro,cached
     # environment:
     #   USE_HTTPS: 'true'
 

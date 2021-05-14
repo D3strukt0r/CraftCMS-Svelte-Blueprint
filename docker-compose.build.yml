@@ -4,7 +4,7 @@ services:
   php:
     build:
       context: .
-      target: php
+      target: app-php
       cache_from:
         - ${PHP_IMAGE:?PHP_IMAGE is not set or empty}
     image: ${PHP_IMAGE:?PHP_IMAGE is not set or empty}
@@ -12,7 +12,7 @@ services:
   nginx:
     build:
       context: .
-      target: nginx
+      target: app-nginx
       cache_from:
         - ${PHP_IMAGE:?PHP_IMAGE is not set or empty}
         - ${NGINX_IMAGE:?NGINX_IMAGE is not set or empty}

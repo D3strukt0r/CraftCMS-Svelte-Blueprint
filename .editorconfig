@@ -286,8 +286,6 @@ ij_typescript_while_on_new_line = false
 ij_typescript_wrap_comments = false
 
 [{*.bash,*.sh,*.zsh}]
-indent_size = 2
-tab_width = 2
 ij_visual_guides = none
 ij_shell_binary_ops_start_line = false
 ij_shell_keep_column_alignment_padding = false

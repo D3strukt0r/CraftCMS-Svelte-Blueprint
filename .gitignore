@@ -196,4 +196,7 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/macos,linux,dotenv,windows,composer,phpstorm,vscode
 
 # Don't publish licenses
-config/license.key
+/config/license.key
+/config/license.key*
+
+/docker-compose.yml

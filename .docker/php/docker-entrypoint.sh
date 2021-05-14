@@ -48,6 +48,104 @@ file_env() {
     unset "$fileVar"
 }
 
+# Setup environment variables
+manualEnvs=(
+    APP_ID
+    SECURITY_KEY
+)
+envs=(
+    PHP_MAX_EXECUTION_TIME
+    PHP_MEMORY_LIMIT
+    PHP_POST_MAX_SIZE
+    PHP_UPLOAD_MAX_FILESIZE
+    "${manualEnvs[@]}"
+    ENVIRONMENT
+    DB_DRIVER
+    DB_SERVER
+    DB_PORT
+    DB_USER
+    DB_PASSWORD
+    DB_DATABASE
+    DB_SCHEMA
+    DB_TABLE_PREFIX
+    ASSETS_URL
+    SITE_URL
+    WEB_ROOT_PATH
+    LICENSE_KEY
+    REDIS_HOSTNAME
+    REDIS_PORT
+    REDIS_PASSWORD
+    REDIS_DEFAULT_DB
+    REDIS_CRAFT_DB
+    GA_TRACKING_ID
+)
+
+# Set empty environment variable or get content from "/run/secrets/<something>"
+for e in "${envs[@]}"; do
+    file_env "$e"
+done
+
+# Set default environment variable values
+: "${PHP_MAX_EXECUTION_TIME:=120}"
+# 'memory_limit' has to be larger than 'post_max_size' and 'upload_max_filesize'
+: "${PHP_MEMORY_LIMIT:=256M}"
+# Important for upload limit. 'post_max_size' has to be larger than 'upload_max_filesize'
+: "${PHP_POST_MAX_SIZE:=100M}"
+: "${PHP_UPLOAD_MAX_FILESIZE:=100M}"
+
+# CraftCMS settings
+# The application ID used to to uniquely store session and cache data, mutex locks, and more
+: "${APP_ID:=}"
+# The environment Craft is currently running in (dev, staging, production, etc.)
+: "${ENVIRONMENT:=production}"
+# The secure key Craft will use for hashing and encrypting data
+: "${SECURITY_KEY:=}"
+
+# Database settings
+# The database driver that will be used (mysql or pgsql)
+: "${DB_DRIVER:=mysql}"
+# The database server name or IP address
+: "${DB_SERVER:=db}"
+# The port to connect to the database with
+if [ -z "$DB_PORT" ]; then
+    if [ "$DB_DRIVER" = "mysql" ]; then
+        : "${DB_PORT:=3306}"
+    elif [ "$DB_DRIVER" = "pgsql" ]; then
+        : "${DB_PORT:=5432}"
+    else
+        : "${DB_PORT:=}"
+    fi
+fi
+# The database username to connect with
+: "${DB_USER:=root}"
+# The database password to connect with
+: "${DB_PASSWORD:=}"
+# The name of the database to select
+: "${DB_DATABASE:=craft}"
+# The database schema that will be used (PostgreSQL only)
+: "${DB_SCHEMA:=public}"
+# The prefix that should be added to generated table names (only necessary if multiple
+# things are sharing the same database)
+: "${DB_TABLE_PREFIX:=}"
+
+# URL & path settings
+: "${ASSETS_URL:=http://localhost/assets}"
+: "${SITE_URL:=http://localhost}"
+: "${WEB_ROOT_PATH:=/var/www/web}"
+
+# Craft & Plugin Licenses
+: "${LICENSE_KEY:=}"
+
+# Redis settings
+: "${REDIS_HOSTNAME:=redis}"
+: "${REDIS_PORT:=6379}"
+: "${REDIS_PASSWORD:=}"
+: "${REDIS_DEFAULT_DB:=0}"
+: "${REDIS_CRAFT_DB:=3}"
+
+# Google Analytics settings
+: "${GA_TRACKING_ID:=}"
+
 # Setup php
 if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ]; then
     entrypoint_note 'Entrypoint script for CraftCMS started'
@@ -55,94 +153,6 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ]; then
     # ----------------------------------------
 
     entrypoint_note 'Load various environment variables'
-    manualEnvs=(
-        APP_ID
-        SECURITY_KEY
-    )
-    envs=(
-        PHP_MAX_EXECUTION_TIME
-        PHP_MEMORY_LIMIT
-        PHP_POST_MAX_SIZE
-        PHP_UPLOAD_MAX_FILESIZE
-        "${manualEnvs[@]}"
-        ENVIRONMENT
-        DB_DRIVER
-        DB_SERVER
-        DB_PORT
-        DB_USER
-        DB_PASSWORD
-        DB_DATABASE
-        DB_SCHEMA
-        DB_TABLE_PREFIX
-        ASSETS_URL
-        SITE_URL
-        WEB_ROOT_PATH
-        LICENSE_KEY
-        REDIS_HOSTNAME
-        REDIS_PORT
-        REDIS_PASSWORD
-        REDIS_DEFAULT_DB
-        REDIS_CRAFT_DB
-        GA_TRACKING_ID
-    )
-
-    # Set empty environment variable or get content from "/run/secrets/<something>"
-    for e in "${envs[@]}"; do
-        file_env "$e"
-    done
-
-    # Set default environment variable values
-    : "${PHP_MAX_EXECUTION_TIME:=120}"
-    # 'memory_limit' has to be larger than 'post_max_size' and 'upload_max_filesize'
-    : "${PHP_MEMORY_LIMIT:=256M}"
-    # Important for upload limit. 'post_max_size' has to be larger than 'upload_max_filesize'
-    : "${PHP_POST_MAX_SIZE:=100M}"
-    : "${PHP_UPLOAD_MAX_FILESIZE:=100M}"
-
-    # CraftCMS settings
-    # The application ID used to to uniquely store session and cache data, mutex locks, and more
-    : "${APP_ID:=}"
-    # The environment Craft is currently running in (dev, staging, production, etc.)
-    : "${ENVIRONMENT:=production}"
-    # The secure key Craft will use for hashing and encrypting data
-    : "${SECURITY_KEY:=}"
-
-    # Database settings
-    # The database driver that will be used (mysql or pgsql)
-    : "${DB_DRIVER:=mysql}"
-    # The database server name or IP address
-    : "${DB_SERVER:=db}"
-    # The port to connect to the database with
-    : "${DB_PORT:=}"
-    # The database username to connect with
-    : "${DB_USER:=root}"
-    # The database password to connect with
-    : "${DB_PASSWORD:=}"
-    # The name of the database to select
-    : "${DB_DATABASE:=craft}"
-    # The database schema that will be used (PostgreSQL only)
-    : "${DB_SCHEMA:=public}"
-    # The prefix that should be added to generated table names (only necessary if multiple
-    # things are sharing the same database)
-    : "${DB_TABLE_PREFIX:=}"
-
-    # URL & path settings
-    : "${ASSETS_URL:=http://localhost/assets}"
-    : "${SITE_URL:=http://localhost}"
-    : "${WEB_ROOT_PATH:=/app/web}"
-
-    # Craft & Plugin Licenses
-    : "${LICENSE_KEY:=}"
-
-    # Redis settings
-    : "${REDIS_HOSTNAME:=redis}"
-    : "${REDIS_PORT:=6379}"
-    : "${REDIS_PASSWORD:=}"
-    : "${REDIS_DEFAULT_DB:=0}"
-    : "${REDIS_CRAFT_DB:=3}"
-
-    # Google Analytics settings
-    : "${GA_TRACKING_ID:=}"
 
     missing_manual_settings=
     for e in "${manualEnvs[@]}"; do
@@ -174,28 +184,13 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ]; then
     fi
     ln -sf "$PHP_INI_RECOMMENDED" "$PHP_DIR/php.ini"
 
-    {
-        echo 'opcache.revalidate_freq = 0'
-        if [ "$ENVIRONMENT" = 'production' ]; then
-            echo 'opcache.validate_timestamps = 0'
-        fi
-        echo "opcache.max_accelerated_files = $(find /app -type f -print | grep -c php)"
-        echo 'opcache.memory_consumption = 192'
-        echo 'opcache.interned_strings_buffer = 16'
-        echo 'opcache.fast_shutdown = 1'
-    } >"$PHP_DIR/conf.d/opcache.ini"
-    {
-        echo 'apc.enable_cli = 1'
-        echo 'date.timezone = UTC'
-        echo 'session.auto_start = Off'
-        echo 'short_open_tag = Off'
-        echo "max_execution_time = $PHP_MAX_EXECUTION_TIME"
-        echo "memory_limit = $PHP_MEMORY_LIMIT"
-    } >"$PHP_DIR/conf.d/misc.ini"
-    {
-        echo "post_max_size = $PHP_POST_MAX_SIZE"
-        echo "upload_max_filesize = $PHP_UPLOAD_MAX_FILESIZE"
-    } >"$PHP_DIR/conf.d/upload-limit.ini"
+    sed "s/max_execution_time = 30/max_execution_time = $PHP_MAX_EXECUTION_TIME/" -i "$PHP_DIR/php.ini"
+
+    sed "s/memory_limit = 128M/memory_limit = $PHP_MEMORY_LIMIT/" -i "$PHP_DIR/php.ini"
+    sed "s/post_max_size = 8M/post_max_size = $PHP_POST_MAX_SIZE/" -i "$PHP_DIR/php.ini"
+    sed "s/upload_max_filesize = 2M/upload_max_filesize = $PHP_UPLOAD_MAX_FILESIZE/" -i "$PHP_DIR/php.ini"
+
+    sed "s/;opcache.max_accelerated_files=10000/opcache.max_accelerated_files = $(find /var/www -type f -print | grep -c php)/" -i "$PHP_DIR/php.ini"
 
     # ----------------------------------------
 
@@ -215,14 +210,6 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ]; then
     # ----------------------------------------
 
     entrypoint_note 'Waiting for db to be ready'
-
-    if [ -z "$DB_PORT" ]; then
-        if [ "$DB_DRIVER" = "mysql" ]; then
-            DB_PORT=3306
-        elif [ "$DB_DRIVER" = "pgsql" ]; then
-            DB_PORT=5432
-        fi
-    fi
 
     ATTEMPTS_LEFT_TO_REACH_DATABASE=60
     if [ "$DB_DRIVER" = "mysql" ]; then
@@ -248,6 +235,15 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ]; then
     fi
 
     # TODO: Check if required folders are writeable by www-data
+    # Requires write permission on:
+    # - .env
+    # - composer.json
+    # - composer.lock
+    # - config/license.key
+    # - config/project/*
+    # - storage/*
+    # - vendor/*
+    # - web/cpresources/*
 fi
 
 exec "$@"

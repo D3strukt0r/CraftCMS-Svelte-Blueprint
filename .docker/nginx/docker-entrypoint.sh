@@ -48,6 +48,21 @@ file_env() {
     unset "$fileVar"
 }
 
+envs=(
+    NGINX_CLIENT_MAX_BODY_SIZE
+    USE_HTTPS
+)
+
+# Set empty environment variable or get content from "/run/secrets/<something>"
+for e in "${envs[@]}"; do
+    file_env "$e"
+done
+
+# Important for upload limit.
+: "${NGINX_CLIENT_MAX_BODY_SIZE:=100M}"
+
+: "${USE_HTTPS:=false}"
+
 # Prepare nginx
 if [ "$1" = 'nginx' ]; then
     entrypoint_note 'Entrypoint script for CraftCMS started'
@@ -55,20 +70,6 @@ if [ "$1" = 'nginx' ]; then
     # ----------------------------------------
 
     entrypoint_note 'Load various environment variables'
-    envs=(
-        NGINX_CLIENT_MAX_BODY_SIZE
-        USE_HTTPS
-    )
-
-    # Set empty environment variable or get content from "/run/secrets/<something>"
-    for e in "${envs[@]}"; do
-        file_env "$e"
-    done
-
-    # Important for upload limit.
-    : "${NGINX_CLIENT_MAX_BODY_SIZE:=100M}"
-
-    : "${USE_HTTPS:=false}"
 
     # ----------------------------------------
 
@@ -94,12 +95,12 @@ if [ "$1" = 'nginx' ]; then
         entrypoint_note 'Enabling HTTPS for nginx ...'
         if [ ! -f /etc/nginx/conf.d/default-ssl.conf ]; then
             # shellcheck disable=SC2016,SC2046
-            envsubst "$(printf '${%s} ' $(compgen -A variable))" </etc/nginx/conf.d/default-ssl.template >/etc/nginx/conf.d/default-ssl.conf
+            envsubst "$(printf '${%s} ' $(compgen -A variable))" </etc/nginx/http.d/default-ssl.template >/etc/nginx/http.d/default-ssl.conf
         fi
     else
         entrypoint_note 'Enabling HTTP for nginx ...'
         # shellcheck disable=SC2016,SC2046
-        envsubst "$(printf '${%s} ' $(compgen -A variable))" </etc/nginx/conf.d/default.template >/etc/nginx/conf.d/default.conf
+        envsubst "$(printf '${%s} ' $(compgen -A variable))" </etc/nginx/http.d/default.template >/etc/nginx/http.d/default.conf
     fi
 fi
 
