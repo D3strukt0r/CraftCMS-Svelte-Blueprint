@@ -43,7 +43,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/craftcms/plugin-installer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/craftcms/oauth2-craftid" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/craftcms/cms" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/craftcms/redactor" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/craftcms/server-check" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/cpliakas/git-wrapper" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/yiisoft/yii2-composer" />
@@ -114,6 +113,24 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/psy/psysh" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/event-dispatcher" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/treeware/plant" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mrclay/props-dic" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mrclay/jsmin-php" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mrclay/minify" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/pimple/pimple" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/monolog/monolog" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/nystudio107/craft-minify" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/intervention/httpauth" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/marcusschwarz/lesserphp" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/tubalmartin/cssmin" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/craftcms/ckeditor" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/dompdf/dompdf" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phenx/php-svg-lib" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phenx/php-font-lib" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/craftcms/commerce" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/simple-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/ibericode/vat" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/moneyphp/money" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/sabberworm/php-css-parser" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

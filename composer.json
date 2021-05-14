@@ -39,10 +39,12 @@
         }
     ],
     "require": {
+        "craftcms/ckeditor": "^1",
         "craftcms/cms": "^3.6.4",
-        "craftcms/redactor": "^2",
+        "craftcms/commerce": "3.3.1.1",
         "mmikkel/cp-field-inspect": "^1",
         "mutation/translate": "^2",
+        "nystudio107/craft-minify": "^1",
         "nystudio107/craft-retour": "^3",
         "nystudio107/craft-seomatic": "^3",
         "ostark/craft-async-queue": "^2",
