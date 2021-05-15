@@ -18,13 +18,13 @@ ARG GROUP_ID
 # - linux/arm/v6
 FROM alpine:3.13 AS base
 
+LABEL maintainer="Manuele Vaccari <manuele.vaccari@gmail.com>"
+
 ARG USER_ID
 ARG GROUP_ID
 
-ENV ENV=/etc/profile
-
 # hadolint ignore=DL3018
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     apk update; \
     apk upgrade; \
     apk add --no-cache \
@@ -42,7 +42,7 @@ RUN set -eux; \
         # https://github.com/docker-library/php/issues/494
         openssl
 
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     # Custom bash config
     rm /etc/profile.d/color_prompt; \
     echo '. /etc/profile' >"$HOME/.bashrc"; \
@@ -78,7 +78,7 @@ FROM base AS base-php
 ENV PHP_DIR="/etc/php8"
 
 # hadolint ignore=DL3018
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     apk update; \
     apk add --no-cache \
         # Alpine package for "imagemagick" contains ~120 .so files,
@@ -116,7 +116,7 @@ RUN set -eux; \
         php8-pecl-apcu \
         php8-pecl-imagick
 
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     # Fix missing default binaries
     ln --symbolic php8 /usr/bin/php; \
     ln --symbolic php-fpm8 /usr/sbin/php-fpm; \
@@ -138,14 +138,15 @@ STOPSIGNAL SIGQUIT
 EXPOSE 9000
 
 # https://github.com/renatomefi/php-fpm-healthcheck
-RUN curl --fail --silent --show-error --location \
+RUN set -o errexit -o nounset -o xtrace; \
+    curl --fail --silent --show-error --location \
         --output /usr/bin/php-fpm-healthcheck \
         https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck; \
     chmod +x /usr/bin/php-fpm-healthcheck
 HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 CMD php-fpm-healthcheck || exit 1
 
 COPY .docker/php/docker-entrypoint.sh /usr/bin/docker-entrypoint
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     chmod +x /usr/bin/docker-entrypoint
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]
@@ -158,7 +159,7 @@ FROM base AS base-nginx
 ENV NGINX_DIR="/etc/nginx"
 
 # hadolint ignore=DL3018
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     apk update; \
     apk add --no-cache \
         gettext \
@@ -166,7 +167,7 @@ RUN set -eux; \
         # Nginx
         nginx
 
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     # Fix www folder already has content
     rm --recursive /var/www/*; \
     \
@@ -188,10 +189,10 @@ STOPSIGNAL SIGQUIT
 
 EXPOSE 80
 
-HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 CMD curl -f http://localhost/ || exit 1
+HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 CMD curl --fail http://127.0.0.1/ || exit 1
 
 COPY .docker/nginx/docker-entrypoint.sh /usr/bin/docker-entrypoint
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     chmod +x /usr/bin/docker-entrypoint
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["nginx", "-g", "daemon off;"]
@@ -205,7 +206,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # Prevent the reinstallation of vendors at every changes in the source code
 COPY --chown=www-data:www-data composer.json composer.lock ./
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     su --command 'composer install --prefer-dist --no-dev --no-scripts --no-progress --optimize-autoloader --no-interaction --no-plugins' www-data
 
 # -----------------------------------------------------------------------------
@@ -222,7 +223,7 @@ COPY --chown=www-data:www-data templates ./templates
 COPY --chown=www-data:www-data web ./web
 COPY --from=app-php-vendor --chown=www-data:www-data /var/www/vendor ./vendor
 
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     chown www-data:www-data --recursive .; \
     find . -type d -exec chmod u=rwx,g=rx,o=rx {} \;; \
     find . -type f -exec chmod u=rw,g=r,o=r {} \;; \
@@ -235,7 +236,7 @@ FROM base-nginx AS app-nginx
 
 COPY --from=app-php --chown=www-data:www-data /var/www/web ./web
 
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     # Empty all php files (to reduce container size). Only the file's existence is important
     find . -type f -name "*.php" -exec sh -c 'i="$1"; >"$i"' _ {} \;; \
     \
@@ -254,12 +255,12 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 COPY --from=app-php-vendor --chown=www-data:www-data /var/www/composer.json /var/www/composer.lock ./
 
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     # Install XDebug
     apk add --no-cache \
         php8-pecl-xdebug
 
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     sed 's/;zend_extension=xdebug.so/zend_extension = xdebug.so/' -i "$PHP_DIR/conf.d/50_xdebug.ini"; \
     sed 's/;xdebug.mode=off/xdebug.mode = develop,debug/' -i "$PHP_DIR/conf.d/50_xdebug.ini"; \
     { \
@@ -274,7 +275,7 @@ RUN set -eux; \
     # Update php configuration
     ln --symbolic --force "$PHP_DIR/php.ini-development" "$PHP_DIR/php.ini"
 
-RUN set -eux; \
+RUN set -o errexit -o nounset -o xtrace; \
     # Update app with dev libraries
     su --command 'composer install --prefer-dist --no-scripts --no-progress --optimize-autoloader --no-interaction --no-plugins' www-data
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eo pipefail
+set -o errexit -o nounset -o pipefail
 
 # If command starts with an option (`-f` or `--some-option`), prepend main command
 if [ "${1#-}" != "$1" ]; then
