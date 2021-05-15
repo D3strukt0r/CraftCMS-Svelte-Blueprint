@@ -108,9 +108,11 @@ RUN set -o errexit -o nounset -o xtrace; \
         php8-pdo_pgsql \
         php8-phar \
         php8-session \
+        php8-simplexml \
         php8-soap \
         php8-tokenizer \
         php8-xml \
+        php8-xmlreader \
         php8-xmlwriter \
         php8-zip \
         php8-pecl-apcu \

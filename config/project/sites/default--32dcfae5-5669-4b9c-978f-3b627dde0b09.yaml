@@ -1,0 +1,8 @@
+baseUrl: $PRIMARY_SITE_URL
+handle: default
+hasUrls: true
+language: de-CH
+name: Blueprint
+primary: true
+siteGroup: b0da00ec-236b-4fa4-95a8-aa84dc519b49 # Blueprint
+sortOrder: 1

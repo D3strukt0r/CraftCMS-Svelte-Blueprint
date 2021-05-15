@@ -1,0 +1,73 @@
+dateModified: 1621099195
+email:
+  fromEmail: admin@local.test
+  fromName: Blueprint
+  transportType: craft\mail\transportadapters\Sendmail
+plugins:
+  async-queue:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
+  blitz:
+    edition: standard
+    enabled: true
+    licenseKey: $LICENSE_KEY_BLITZ
+    schemaVersion: 3.6.6
+  ckeditor:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
+  commerce:
+    edition: pro
+    enabled: true
+    licenseKey: $LICENSE_KEY_COMMERCE
+    schemaVersion: 3.3.2
+  cp-field-inspect:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
+  dumper:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
+  minify:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
+  navigation:
+    edition: standard
+    enabled: true
+    licenseKey: $LICENSE_KEY_NAVIGATION
+    schemaVersion: 1.0.21
+  password-policy:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
+  retour:
+    edition: standard
+    enabled: true
+    licenseKey: $LICENSE_KEY_RETOUR
+    schemaVersion: 3.0.9
+  seomatic:
+    edition: standard
+    enabled: true
+    licenseKey: $LICENSE_KEY_SEOMATIC
+    schemaVersion: 3.0.9
+  translations-admin:
+    edition: standard
+    enabled: true
+    licenseKey: $LICENSE_KEY_TRANSLATIONS_ADMIN
+    schemaVersion: 1.1.0
+system:
+  edition: pro
+  live: true
+  name: Blueprint
+  retryDuration: null
+  schemaVersion: 3.6.8
+  timeZone: Europe/Zurich
+users:
+  allowPublicRegistration: false
+  defaultGroup: null
+  photoSubpath: null
+  photoVolumeUid: null
+  requireEmailVerification: true

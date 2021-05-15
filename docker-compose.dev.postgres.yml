@@ -85,8 +85,14 @@ services:
       ASSETS_URL: http://localhost/assets
       SITE_URL: http://localhost
 
-      # Craft & Plugin Licenses
-      # LICENSE_KEY:
+      # Craft & Plugin Licenses (When the actual license has a $, please replace them all with $$)
+      LICENSE_KEY_CRAFT: $LICENSE_KEY_CRAFT
+      LICENSE_KEY_BLITZ: $LICENSE_KEY_BLITZ
+      LICENSE_KEY_COMMERCE: $LICENSE_KEY_COMMERCE
+      LICENSE_KEY_NAVIGATION: $LICENSE_KEY_NAVIGATION
+      LICENSE_KEY_RETOUR: $LICENSE_KEY_RETOUR
+      LICENSE_KEY_SEOMATIC: $LICENSE_KEY_SEOMATIC
+      LICENSE_KEY_TRANSLATIONS_ADMIN: $LICENSE_KEY_TRANSLATIONS_ADMIN
 
       # Redis settings
       REDIS_HOSTNAME: redis
