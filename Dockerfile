@@ -118,11 +118,11 @@ RUN set -eux; \
 
 RUN set -eux; \
     # Fix missing default binaries
-    ln -s php8 /usr/bin/php; \
-    ln -s php-fpm8 /usr/sbin/php-fpm; \
+    ln --symbolic php8 /usr/bin/php; \
+    ln --symbolic php-fpm8 /usr/sbin/php-fpm; \
     \
     # Link to production by default
-    ln -s -f "$PHP_DIR/php.ini-production" "$PHP_DIR/php.ini"
+    ln --symbolic --force "$PHP_DIR/php.ini-production" "$PHP_DIR/php.ini"
 
 COPY .docker/php/conf/php-development.ini $PHP_DIR/php.ini-development
 COPY .docker/php/conf/php-production.ini  $PHP_DIR/php.ini-production
@@ -138,7 +138,9 @@ STOPSIGNAL SIGQUIT
 EXPOSE 9000
 
 # https://github.com/renatomefi/php-fpm-healthcheck
-RUN curl -fsSL -o /usr/bin/php-fpm-healthcheck https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck; \
+RUN curl --fail --silent --show-error --location \
+        --output /usr/bin/php-fpm-healthcheck \
+        https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck; \
     chmod +x /usr/bin/php-fpm-healthcheck
 HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 CMD php-fpm-healthcheck || exit 1
 
@@ -166,11 +168,11 @@ RUN set -eux; \
 
 RUN set -eux; \
     # Fix www folder already has content
-    rm -r /var/www/*; \
+    rm --recursive /var/www/*; \
     \
     # Forward request and error logs to docker log collector
-    ln -s -f /dev/stdout /var/log/nginx/access.log; \
-    ln -s -f /dev/stderr /var/log/nginx/error.log; \
+    ln --symbolic --force /dev/stdout /var/log/nginx/access.log; \
+    ln --symbolic --force /dev/stderr /var/log/nginx/error.log; \
     \
     # Remove default config, will be replaced on startup with custom one
     rm $NGINX_DIR/nginx.conf; \
@@ -203,9 +205,8 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # Prevent the reinstallation of vendors at every changes in the source code
 COPY --chown=www-data:www-data composer.json composer.lock ./
-USER www-data
 RUN set -eux; \
-    composer install --prefer-dist --no-dev --no-scripts --no-progress --optimize-autoloader --no-interaction --no-plugins
+    su --command 'composer install --prefer-dist --no-dev --no-scripts --no-progress --optimize-autoloader --no-interaction --no-plugins' www-data
 
 # -----------------------------------------------------------------------------
 # App (PHP environment)
@@ -260,9 +261,10 @@ RUN set -eux; \
 
 RUN set -eux; \
     sed 's/;zend_extension=xdebug.so/zend_extension = xdebug.so/' -i "$PHP_DIR/conf.d/50_xdebug.ini"; \
-    sed 's/;xdebug.mode=off/xdebug.mode = debug/' -i "$PHP_DIR/conf.d/50_xdebug.ini"; \
+    sed 's/;xdebug.mode=off/xdebug.mode = develop,debug/' -i "$PHP_DIR/conf.d/50_xdebug.ini"; \
     { \
         echo 'xdebug.start_with_request = yes'; \
+        echo 'xdebug.log = /var/www/storage/logs/xdebug.log'; \
         \
         echo 'xdebug.client_host = host.docker.internal'; \
         # the port (9003 by default) to which Xdebug connects
@@ -270,12 +272,10 @@ RUN set -eux; \
     } >>"$PHP_DIR/conf.d/50_xdebug.ini"; \
     \
     # Update php configuration
-    ln -s -f "$PHP_DIR/php.ini-development" "$PHP_DIR/php.ini"
+    ln --symbolic --force "$PHP_DIR/php.ini-development" "$PHP_DIR/php.ini"
 
-USER www-data
 RUN set -eux; \
     # Update app with dev libraries
-    composer install --prefer-dist --no-scripts --no-progress --optimize-autoloader --no-interaction --no-plugins
-USER root
+    su --command 'composer install --prefer-dist --no-scripts --no-progress --optimize-autoloader --no-interaction --no-plugins' www-data
 
 EXPOSE 9003

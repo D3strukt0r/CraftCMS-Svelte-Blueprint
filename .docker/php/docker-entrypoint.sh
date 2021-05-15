@@ -182,7 +182,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ]; then
     if [ "$ENVIRONMENT" != 'production' ]; then
         PHP_INI_RECOMMENDED="$PHP_DIR/php.ini-development"
     fi
-    ln -sf "$PHP_INI_RECOMMENDED" "$PHP_DIR/php.ini"
+    ln --symbolic --force "$PHP_INI_RECOMMENDED" "$PHP_DIR/php.ini"
 
     sed "s/max_execution_time = 30/max_execution_time = $PHP_MAX_EXECUTION_TIME/" -i "$PHP_DIR/php.ini"
 
@@ -196,7 +196,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ]; then
 
     if [ "$ENVIRONMENT" != 'production' ] && [ -f /certs/localCA.crt ]; then
         entrypoint_note 'Update CA certificates.'
-        ln -sf /certs/localCA.crt /usr/local/share/ca-certificates/localCA.crt
+        ln --symbolic --force /certs/localCA.crt /usr/local/share/ca-certificates/localCA.crt
         update-ca-certificates
     fi
 
@@ -204,7 +204,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ]; then
 
     if [ "$ENVIRONMENT" != 'production' ] && [ "$(command -v composer)" ]; then
         entrypoint_note 'Installing libraries according to non-production environment ...'
-        composer install --prefer-dist --no-scripts --no-progress --optimize-autoloader --no-interaction --no-plugins
+        su --command 'composer install --prefer-dist --no-scripts --no-progress --optimize-autoloader --no-interaction --no-plugins' www-data
     fi
 
     # ----------------------------------------

@@ -58,6 +58,10 @@ services:
     depends_on:
       - db
       - redis
+    ports:
+      - 9003:9003
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
     volumes:
       - .:/var/www
     environment:
