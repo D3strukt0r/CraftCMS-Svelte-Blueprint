@@ -18,7 +18,7 @@ ARG GROUP_ID
 # - linux/arm/v6
 FROM alpine:3.13 AS base
 
-LABEL maintainer="Manuele Vaccari <manuele.vaccari@gmail.com>"
+LABEL maintainer="D3strukt0r <dev@d3strukt0r.me>"
 
 ARG USER_ID
 ARG GROUP_ID

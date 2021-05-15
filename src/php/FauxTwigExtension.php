@@ -100,11 +100,11 @@ class FauxTwigExtension extends \Twig\Extension\AbstractExtension implements \Tw
             'currentSite' => new \craft\models\Site(),
             'now' => new \DateTime(),
             // Commerce Elements
-            // 'lineItem' => new \craft\commerce\models\LineItem(),
-            // 'order' => new \craft\commerce\elements\Order(),
-            // 'product' => new \craft\commerce\elements\Product(),
+            'lineItem' => new \craft\commerce\models\LineItem(),
+            'order' => new \craft\commerce\elements\Order(),
+            'product' => new \craft\commerce\elements\Product(),
             // Third party globals
-            // 'seomatic' => new \nystudio107\seomatic\variables\SeomaticVariable(),
+            'seomatic' => new \nystudio107\seomatic\variables\SeomaticVariable(),
         ];
     }
 }
