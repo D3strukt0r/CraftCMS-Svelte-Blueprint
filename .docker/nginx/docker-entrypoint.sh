@@ -3,7 +3,7 @@
 set -o errexit -o nounset -o pipefail
 
 # If command starts with an option (`-f` or `--some-option`), prepend main command
-if [ "${1#-}" != "$1" ]; then
+if [[ "${1#-}" != "$1" ]]; then
     set -- nginx "$@"
 fi
 
@@ -34,14 +34,14 @@ file_env() {
     local var="$1"
     local fileVar="${var}_FILE"
     local def="${2:-}"
-    if [ "${!var:-}" ] && [ "${!fileVar:-}" ]; then
+    if [[ "${!var:-}" ]] && [[ "${!fileVar:-}" ]]; then
         echo >&2 "error: both $var and $fileVar are set (but are exclusive)"
         exit 1
     fi
     local val="$def"
-    if [ "${!var:-}" ]; then
+    if [[ "${!var:-}" ]]; then
         val="${!var}"
-    elif [ "${!fileVar:-}" ]; then
+    elif [[ "${!fileVar:-}" ]]; then
         val="$(<"${!fileVar}")"
     fi
     export "$var"="$val"
@@ -64,7 +64,7 @@ done
 : "${USE_HTTPS:=false}"
 
 # Prepare nginx
-if [ "$1" = 'nginx' ]; then
+if [[ "$1" = 'nginx' ]]; then
     entrypoint_note 'Entrypoint script for CraftCMS started'
 
     # ----------------------------------------
@@ -76,9 +76,9 @@ if [ "$1" = 'nginx' ]; then
     # https://github.com/docker-library/docs/issues/496#issuecomment-287927576
     # shellcheck disable=SC2016,SC2046
     envsubst "$(printf '${%s} ' $(compgen -A variable))" </etc/nginx/nginx.template >/etc/nginx/nginx.conf
-    if [ "$USE_HTTPS" = 'true' ]; then
-        if [ ! -f /certs/website.crt ] || [ ! -f /certs/website.key ]; then
-            if [ ! -d /certs ]; then
+    if [[ "$USE_HTTPS" = 'true' ]]; then
+        if [[ ! -f /certs/website.crt ]] || [[ ! -f /certs/website.key ]]; then
+            if [[ ! -d /certs ]]; then
                 mkdir /certs
             fi
             cd /certs

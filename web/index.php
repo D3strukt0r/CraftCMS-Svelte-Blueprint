@@ -16,9 +16,9 @@ if (class_exists('Dotenv\Dotenv') && file_exists(CRAFT_BASE_PATH.'/.env')) {
 }
 
 // Load and run Craft
-define('CRAFT_ENVIRONMENT', getenv('ENVIRONMENT') ?: 'production');
+define('CRAFT_ENVIRONMENT', getenv('ENVIRONMENT') ?: 'prod');
 if (getenv('LICENSE_KEY_CRAFT')) {
-    define('CRAFT_LICENSE_KEY', getenv('LICENSE_KEY_CRAFT'));
+    define('CRAFT_LICENSE_KEY', getenv('LICENSE_KEY'));
 }
 /** @var craft\web\Application $app */
 $app = require CRAFT_VENDOR_PATH.'/craftcms/cms/bootstrap/web.php';

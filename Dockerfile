@@ -126,10 +126,10 @@ RUN set -o errexit -o nounset -o xtrace; \
     # Link to production by default
     ln --symbolic --force "$PHP_DIR/php.ini-production" "$PHP_DIR/php.ini"
 
-COPY .docker/php/conf/php-development.ini $PHP_DIR/php.ini-development
-COPY .docker/php/conf/php-production.ini  $PHP_DIR/php.ini-production
-COPY .docker/php/conf/php-fpm.ini         $PHP_DIR/php-fpm.conf
-COPY .docker/php/conf/php-fpm.d/www.ini   $PHP_DIR/php-fpm.d/www.conf
+COPY .docker/php/conf/php.dev.ini       $PHP_DIR/php.ini-development
+COPY .docker/php/conf/php.prod.ini      $PHP_DIR/php.ini-production
+COPY .docker/php/conf/php-fpm.ini       $PHP_DIR/php-fpm.conf
+COPY .docker/php/conf/php-fpm.d/www.ini $PHP_DIR/php-fpm.d/www.conf
 
 WORKDIR /var/www
 
@@ -200,6 +200,37 @@ ENTRYPOINT ["docker-entrypoint"]
 CMD ["nginx", "-g", "daemon off;"]
 
 # -----------------------------------------------------------------------------
+# App (PHP Dev environment)
+# -----------------------------------------------------------------------------
+FROM base-php AS base-php-dev
+
+ENV PATH="${PATH}:/home/www-data/.composer/vendor/bin"
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+RUN set -o errexit -o nounset -o xtrace; \
+    # Install XDebug
+    apk add --no-cache \
+        php8-pecl-xdebug
+
+RUN set -o errexit -o nounset -o xtrace; \
+    # Setup XDebug
+    sed 's/;zend_extension=xdebug.so/zend_extension = xdebug.so/' -i "$PHP_DIR/conf.d/50_xdebug.ini"; \
+    sed 's/;xdebug.mode=off/xdebug.mode = develop,debug/' -i "$PHP_DIR/conf.d/50_xdebug.ini"; \
+    { \
+        echo 'xdebug.start_with_request = yes'; \
+        echo 'xdebug.log = /var/www/storage/logs/xdebug.log'; \
+        \
+        echo 'xdebug.client_host = host.docker.internal'; \
+        # the port (9003 by default) to which Xdebug connects
+        echo 'xdebug.client_port = 9003'; \
+    } >>"$PHP_DIR/conf.d/50_xdebug.ini"; \
+    \
+    # Update php configuration
+    ln --symbolic --force "$PHP_DIR/php.ini-development" "$PHP_DIR/php.ini"
+
+EXPOSE 9003
+
+# -----------------------------------------------------------------------------
 # Install vendors
 # -----------------------------------------------------------------------------
 FROM base-php AS app-php-vendor
@@ -246,39 +277,3 @@ RUN set -o errexit -o nounset -o xtrace; \
     chown www-data:www-data --recursive .; \
     find . -type d -exec chmod u=rwx,g=rx,o=rx {} \;; \
     find . -type f -exec chmod u=rw,g=r,o=r {} \;
-
-# -----------------------------------------------------------------------------
-# App (PHP Dev environment)
-# -----------------------------------------------------------------------------
-FROM app-php AS app-php-dev
-
-ENV PATH="${PATH}:/home/www-data/.composer/vendor/bin"
-COPY --from=composer /usr/bin/composer /usr/bin/composer
-
-COPY --from=app-php-vendor --chown=www-data:www-data /var/www/composer.json /var/www/composer.lock ./
-
-RUN set -o errexit -o nounset -o xtrace; \
-    # Install XDebug
-    apk add --no-cache \
-        php8-pecl-xdebug
-
-RUN set -o errexit -o nounset -o xtrace; \
-    sed 's/;zend_extension=xdebug.so/zend_extension = xdebug.so/' -i "$PHP_DIR/conf.d/50_xdebug.ini"; \
-    sed 's/;xdebug.mode=off/xdebug.mode = develop,debug/' -i "$PHP_DIR/conf.d/50_xdebug.ini"; \
-    { \
-        echo 'xdebug.start_with_request = yes'; \
-        echo 'xdebug.log = /var/www/storage/logs/xdebug.log'; \
-        \
-        echo 'xdebug.client_host = host.docker.internal'; \
-        # the port (9003 by default) to which Xdebug connects
-        echo 'xdebug.client_port = 9003'; \
-    } >>"$PHP_DIR/conf.d/50_xdebug.ini"; \
-    \
-    # Update php configuration
-    ln --symbolic --force "$PHP_DIR/php.ini-development" "$PHP_DIR/php.ini"
-
-RUN set -o errexit -o nounset -o xtrace; \
-    # Update app with dev libraries
-    su --command 'composer install --prefer-dist --no-scripts --no-progress --optimize-autoloader --no-interaction --no-plugins' www-data
-
-EXPOSE 9003
