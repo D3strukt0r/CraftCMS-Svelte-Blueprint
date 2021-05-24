@@ -48,9 +48,6 @@ services:
     build:
       context: .
       target: base-php-dev
-      args:
-        USER_ID: ${USER_ID:-0}
-        GROUP_ID: ${GROUP_ID:-0}
     healthcheck:
       start_period: 1m40s
     depends_on:
@@ -63,6 +60,9 @@ services:
     volumes:
       - .:/var/www
     environment:
+      USER_ID: ${USER_ID:-0}
+      GROUP_ID: ${GROUP_ID:-0}
+
       # PHP Settings
       PHP_MAX_EXECUTION_TIME: 0
 
@@ -109,9 +109,6 @@ services:
     build:
       context: .
       target: base-nginx
-      args:
-        USER_ID: ${USER_ID:-0}
-        GROUP_ID: ${GROUP_ID:-0}
     healthcheck:
       test: test -e /var/run/nginx.pid || exit 1
     depends_on:
@@ -121,8 +118,10 @@ services:
       # - 443:443
     volumes:
       - ./web:/var/www/web:ro,cached
-    # environment:
-    #   USE_HTTPS: 'true'
+    environment:
+      USER_ID: ${USER_ID:-0}
+      GROUP_ID: ${GROUP_ID:-0}
+      #USE_HTTPS: 'true'
 
 volumes:
   postgres-dev:

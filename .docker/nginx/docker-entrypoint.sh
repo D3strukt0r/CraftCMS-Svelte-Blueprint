@@ -2,10 +2,14 @@
 
 set -o errexit -o nounset -o pipefail
 
+# -----------------------------------------------------------------------------
+
 # If command starts with an option (`-f` or `--some-option`), prepend main command
 if [[ "${1#-}" != "$1" ]]; then
     set -- nginx "$@"
 fi
+
+# -----------------------------------------------------------------------------
 
 # Logging functions
 entrypoint_log() {
@@ -34,7 +38,7 @@ file_env() {
     local var="$1"
     local fileVar="${var}_FILE"
     local def="${2:-}"
-    if [[ "${!var:-}" ]] && [[ "${!fileVar:-}" ]]; then
+    if [[ "${!var:-}" && "${!fileVar:-}" ]]; then
         echo >&2 "error: both $var and $fileVar are set (but are exclusive)"
         exit 1
     fi
@@ -48,6 +52,10 @@ file_env() {
     unset "$fileVar"
 }
 
+# -----------------------------------------------------------------------------
+
+# Setup environment variables
+entrypoint_note 'Load various environment variables'
 envs=(
     NGINX_CLIENT_MAX_BODY_SIZE
     USE_HTTPS
@@ -63,21 +71,39 @@ done
 
 : "${USE_HTTPS:=false}"
 
+# -----------------------------------------------------------------------------
+
+# Fix mismatched host-container user id
+if [[ -n $GROUP_ID && $GROUP_ID -ne 0 && $GROUP_ID -ne 82 ]]; then
+    groupmod -g "$GROUP_ID" www-data
+    entrypoint_note "Settings GID of group www-data to $GROUP_ID"
+else
+    entrypoint_warn 'Cannot set GID of group www-data to either 0 (root) or 82 (default of www-data)'
+fi
+if [[ -n $USER_ID && $USER_ID -ne 0 && $USER_ID -ne 82 ]]; then
+    usermod -u "$USER_ID" www-data
+    entrypoint_note "Settings UID of user www-data to $USER_ID"
+else
+    entrypoint_warn 'Cannot set UID of user www-data to either 0 (root) or 82 (default of www-data)'
+fi
+
+# -----------------------------------------------------------------------------
+
 # Prepare nginx
-if [[ "$1" = 'nginx' ]]; then
+if [[ $1 == 'nginx' ]]; then
     entrypoint_note 'Entrypoint script for CraftCMS started'
 
-    # ----------------------------------------
+    # -------------------------------------------------------------------------
 
-    entrypoint_note 'Load various environment variables'
+    entrypoint_note 'Check necessary environment variables'
 
-    # ----------------------------------------
+    # -------------------------------------------------------------------------
 
     # https://github.com/docker-library/docs/issues/496#issuecomment-287927576
     # shellcheck disable=SC2016,SC2046
     envsubst "$(printf '${%s} ' $(compgen -A variable))" </etc/nginx/nginx.template >/etc/nginx/nginx.conf
-    if [[ "$USE_HTTPS" = 'true' ]]; then
-        if [[ ! -f /certs/website.crt ]] || [[ ! -f /certs/website.key ]]; then
+    if [[ $USE_HTTPS == 'true' ]]; then
+        if [[ ! -f /certs/website.crt || ! -f /certs/website.key ]]; then
             if [[ ! -d /certs ]]; then
                 mkdir /certs
             fi
@@ -93,7 +119,7 @@ if [[ "$1" = 'nginx' ]]; then
         ln -sf /certs/website.key /etc/ssl/certs/website.key
 
         entrypoint_note 'Enabling HTTPS for nginx ...'
-        if [ ! -f /etc/nginx/conf.d/default-ssl.conf ]; then
+        if [[ ! -f /etc/nginx/conf.d/default-ssl.conf ]]; then
             # shellcheck disable=SC2016,SC2046
             envsubst "$(printf '${%s} ' $(compgen -A variable))" </etc/nginx/http.d/default-ssl.template >/etc/nginx/http.d/default-ssl.conf
         fi

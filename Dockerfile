@@ -50,20 +50,15 @@ RUN set -o errexit -o nounset -o xtrace; \
     # Fix no www folder
     mkdir --parents /var/www; \
     \
-    # Fix mismatched host-container user id
-    if [ ${USER_ID:=82} -ne 0 ] && [ ${GROUP_ID:=82} -ne 0 ]; then \
-        # 82 is the standard uid/gid for "www-data" in Alpine
-        # https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.9-stable
-        # https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.9-stable
-        # https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.9-stable
-        groupadd --gid ${GROUP_ID} --system www-data; \
-        useradd --uid ${USER_ID} --shell /bin/bash --password '*' --create-home --system --gid www-data www-data; \
-        echo '. /etc/profile' >/home/www-data/.bashrc; \
-    else \
-        echo 'Set USER_ID and GROUP_ID to something else than root (0)'; \
-        exit 1; \
-    fi; \
-    chown --changes --silent --no-dereference --recursive ${USER_ID}:${GROUP_ID} \
+    # Fix missing user/group in php/nginx
+    # 82 is the standard uid/gid for "www-data" in Alpine
+    # https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.9-stable
+    # https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.9-stable
+    # https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.9-stable
+    groupadd --gid 82 --system www-data; \
+    useradd --uid 82 --shell /bin/bash --password '*' --create-home --system --gid www-data www-data; \
+    echo '. /etc/profile' >/home/www-data/.bashrc; \
+    chown --changes --silent --no-dereference --recursive www-data:www-data \
         /var/www
 
 COPY .docker/os/color_prompt.sh /etc/profile.d/color_prompt.sh

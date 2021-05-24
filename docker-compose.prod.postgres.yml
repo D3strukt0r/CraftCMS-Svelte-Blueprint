@@ -56,6 +56,9 @@ services:
     volumes:
       - craft-cpresources-prod:/app/web/cpresources
     environment:
+      USER_ID: ${USER_ID:-0}
+      GROUP_ID: ${GROUP_ID:-0}
+
       # PHP Settings
       PHP_MAX_EXECUTION_TIME: 0
 
@@ -111,8 +114,10 @@ services:
       # - 443:443
     volumes:
       - craft-cpresources-prod:/app/web/cpresources
-    # environment:
-    #   USE_HTTPS: 'true'
+    environment:
+      USER_ID: ${USER_ID:-0}
+      GROUP_ID: ${GROUP_ID:-0}
+      #USE_HTTPS: 'true'
 
 volumes:
   postgres-prod:

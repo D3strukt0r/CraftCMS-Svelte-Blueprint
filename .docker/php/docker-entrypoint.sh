@@ -2,10 +2,14 @@
 
 set -o errexit -o nounset -o pipefail
 
+# -----------------------------------------------------------------------------
+
 # If command starts with an option (`-f` or `--some-option`), prepend main command
-if [ "${1#-}" != "$1" ]; then
+if [[ "${1#-}" != "$1" ]]; then
     set -- php-fpm "$@"
 fi
+
+# -----------------------------------------------------------------------------
 
 # Logging functions
 entrypoint_log() {
@@ -34,7 +38,7 @@ file_env() {
     local var="$1"
     local fileVar="${var}_FILE"
     local def="${2:-}"
-    if [[ "${!var:-}" ]] && [ "${!fileVar:-}" ]; then
+    if [[ "${!var:-}" && "${!fileVar:-}" ]]; then
         echo >&2 "error: both $var and $fileVar are set (but are exclusive)"
         exit 1
     fi
@@ -48,12 +52,17 @@ file_env() {
     unset "$fileVar"
 }
 
+# -----------------------------------------------------------------------------
+
 # Setup environment variables
+entrypoint_note 'Load various environment variables'
 manualEnvs=(
     APP_ID
     SECURITY_KEY
 )
 envs=(
+    USER_ID
+    GROUP_ID
     PHP_MAX_EXECUTION_TIME
     PHP_MEMORY_LIMIT
     PHP_POST_MAX_SIZE
@@ -92,6 +101,10 @@ for e in "${envs[@]}"; do
     file_env "$e"
 done
 
+# Fix mismatched host-container user id
+: "${USER_ID:=}"
+: "${GROUP_ID:=}"
+
 # Set default environment variable values
 : "${PHP_MAX_EXECUTION_TIME:=120}"
 # 'memory_limit' has to be larger than 'post_max_size' and 'upload_max_filesize'
@@ -114,10 +127,10 @@ done
 # The database server name or IP address
 : "${DB_SERVER:=db}"
 # The port to connect to the database with
-if [[ -z "$DB_PORT" ]]; then
-    if [[ "$DB_DRIVER" = "mysql" ]]; then
+if [[ -z $DB_PORT ]]; then
+    if [[ $DB_DRIVER == 'mysql' ]]; then
         : "${DB_PORT:=3306}"
-    elif [[ "$DB_DRIVER" = "pgsql" ]]; then
+    elif [[ $DB_DRIVER == 'pgsql' ]]; then
         : "${DB_PORT:=5432}"
     else
         : "${DB_PORT:=}"
@@ -159,13 +172,31 @@ fi
 # Google Analytics settings
 : "${GA_TRACKING_ID:=}"
 
+# -----------------------------------------------------------------------------
+
+# Fix mismatched host-container user id
+if [[ -n $GROUP_ID && $GROUP_ID -ne 0 && $GROUP_ID -ne 82 ]]; then
+    groupmod -g "$GROUP_ID" www-data
+    entrypoint_note "Settings GID of group www-data to $GROUP_ID"
+else
+    entrypoint_warn 'Cannot set GID of group www-data to either 0 (root) or 82 (default of www-data)'
+fi
+if [[ -n $USER_ID && $USER_ID -ne 0 && $USER_ID -ne 82 ]]; then
+    usermod -u "$USER_ID" www-data
+    entrypoint_note "Settings UID of user www-data to $USER_ID"
+else
+    entrypoint_warn 'Cannot set UID of user www-data to either 0 (root) or 82 (default of www-data)'
+fi
+
+# -----------------------------------------------------------------------------
+
 # Setup php
-if [[ "$1" = 'php-fpm' ]] || [[ "$1" = 'php' ]]; then
+if [[ $1 == 'php-fpm' || $1 == 'php' ]]; then
     entrypoint_note 'Entrypoint script for CraftCMS started'
 
-    # ----------------------------------------
+    # -------------------------------------------------------------------------
 
-    entrypoint_note 'Load various environment variables'
+    entrypoint_note 'Check necessary environment variables'
 
     missing_manual_settings=
     for e in "${manualEnvs[@]}"; do
@@ -183,16 +214,17 @@ if [[ "$1" = 'php-fpm' ]] || [[ "$1" = 'php' ]]; then
             esac
         fi
     done
-    if [[ "$missing_manual_settings" = 1 ]]; then
+    if [[ $missing_manual_settings -eq 1 ]]; then
         entrypoint_warn "You haven't set all the important values. Above you can copy-paste the generated ones, but make sure to use them."
     fi
     unset missing_manual_settings
 
-    # ----------------------------------------
+    # -------------------------------------------------------------------------
 
     entrypoint_note 'Load/Create optimized PHP configs'
+
     PHP_INI_RECOMMENDED="$PHP_DIR/php.ini-production"
-    if [[ "$ENVIRONMENT" != 'prod' ]]; then
+    if [[ $ENVIRONMENT != 'prod' ]]; then
         PHP_INI_RECOMMENDED="$PHP_DIR/php.ini-development"
     fi
     ln --symbolic --force "$PHP_INI_RECOMMENDED" "$PHP_DIR/php.ini"
@@ -205,41 +237,84 @@ if [[ "$1" = 'php-fpm' ]] || [[ "$1" = 'php' ]]; then
 
     sed "s/;opcache.max_accelerated_files=10000/opcache.max_accelerated_files = $(find /var/www -type f -print | grep -c php)/" -i "$PHP_DIR/php.ini"
 
-    # ----------------------------------------
+    # -------------------------------------------------------------------------
 
-    if [[ "$ENVIRONMENT" != 'prod' ]] && [[ -f /certs/localCA.crt ]]; then
+    if [[ $ENVIRONMENT != 'prod' && -f /certs/localCA.crt ]]; then
         entrypoint_note 'Update CA certificates.'
+
         ln --symbolic --force /certs/localCA.crt /usr/local/share/ca-certificates/localCA.crt
         update-ca-certificates
     fi
 
-    # ----------------------------------------
+    # -------------------------------------------------------------------------
+
+    entrypoint_note 'Check if www-data has necessary write access'
+
+    filesAndDirToCheck=(
+        #'.env'
+        #'config/license.key'
+        'storage/'
+        'web/cpresources/'
+    )
+
+    if [[ $ENVIRONMENT != 'prod' ]]; then
+        filesAndDirToCheck+=(
+            'config/project/'
+        )
+        if [[ $(command -v composer) ]]; then
+            if [[ -f composer.json ]]; then
+                filesAndDirToCheck+=('composer.json')
+            fi
+            if [[ -f composer.lock ]]; then
+                filesAndDirToCheck+=('composer.lock')
+            fi
+            filesAndDirToCheck+=(
+                'vendor/'
+            )
+        fi
+    fi
+
+    missing_write_access=
+    for i in "${filesAndDirToCheck[@]}"; do
+        if ! su --command "if [[ ! -w $i ]]; then exit 1; fi" www-data; then
+            missing_write_access=1
+            entrypoint_warn "Missing write access to $i"
+        fi
+    done
+    if [[ $missing_write_access -eq 1 ]]; then
+        entrypoint_error 'Required write access is not available'
+    fi
+    unset missing_write_access
+
+    # -------------------------------------------------------------------------
 
     if [[ -f $PHP_DIR/conf.d/50_xdebug.ini ]]; then
         entrypoint_note 'Preparing XDebug ...'
+
         su --command 'mkdir -p storage/logs && touch storage/logs/xdebug.log' www-data
     fi
 
-    # ----------------------------------------
+    # -------------------------------------------------------------------------
 
-    if [[ "$ENVIRONMENT" != 'prod' ]] && [[ "$(command -v composer)" ]] && [[ -f composer.json ]]; then
+    if [[ $ENVIRONMENT != 'prod' && $(command -v composer) && -f composer.json ]]; then
         entrypoint_note 'Installing libraries according to non-production environment ...'
+
         su --command 'composer install --prefer-dist --no-scripts --no-progress --optimize-autoloader --no-interaction --no-plugins' www-data
     fi
 
-    # ----------------------------------------
+    # -------------------------------------------------------------------------
 
     entrypoint_note 'Waiting for db to be ready'
 
     ATTEMPTS_LEFT_TO_REACH_DATABASE=60
-    if [ "$DB_DRIVER" = "mysql" ]; then
-        until [[ $ATTEMPTS_LEFT_TO_REACH_DATABASE = 0 ]] || mysql --host="$DB_SERVER" --port="$DB_PORT" --user="$DB_USER" --password="$DB_PASSWORD" -e "SELECT 1" >/dev/null 2>&1; do
+    if [[ $DB_DRIVER == 'mysql' ]]; then
+        until [[ $ATTEMPTS_LEFT_TO_REACH_DATABASE -eq 0 ]] || mysql --host="$DB_SERVER" --port="$DB_PORT" --user="$DB_USER" --password="$DB_PASSWORD" -e "SELECT 1" >/dev/null 2>&1; do
             sleep 1
             ATTEMPTS_LEFT_TO_REACH_DATABASE=$((ATTEMPTS_LEFT_TO_REACH_DATABASE - 1))
             entrypoint_warn "Still waiting for db to be ready... Or maybe the db is not reachable. $ATTEMPTS_LEFT_TO_REACH_DATABASE attempts left"
         done
-    elif [ "$DB_DRIVER" = "pgsql" ]; then
-        until [[ $ATTEMPTS_LEFT_TO_REACH_DATABASE = 0 ]] || pg_isready --host="$DB_SERVER" --port="$DB_PORT" --username="$DB_USER" --dbname="$DB_DATABASE" >/dev/null 2>&1; do
+    elif [[ $DB_DRIVER == 'pgsql' ]]; then
+        until [[ $ATTEMPTS_LEFT_TO_REACH_DATABASE -eq 0 ]] || pg_isready --host="$DB_SERVER" --port="$DB_PORT" --username="$DB_USER" --dbname="$DB_DATABASE" >/dev/null 2>&1; do
             sleep 1
             ATTEMPTS_LEFT_TO_REACH_DATABASE=$((ATTEMPTS_LEFT_TO_REACH_DATABASE - 1))
             entrypoint_warn "Still waiting for db to be ready... Or maybe the db is not reachable. $ATTEMPTS_LEFT_TO_REACH_DATABASE attempts left"
@@ -248,22 +323,11 @@ if [[ "$1" = 'php-fpm' ]] || [[ "$1" = 'php' ]]; then
         entrypoint_error 'Database not supported! Use either MySQL or PostgreSQL'
     fi
 
-    if [[ $ATTEMPTS_LEFT_TO_REACH_DATABASE = 0 ]]; then
+    if [[ $ATTEMPTS_LEFT_TO_REACH_DATABASE -eq 0 ]]; then
         entrypoint_error 'The db is not up or not reachable'
     else
         entrypoint_note 'The db is now ready and reachable'
     fi
-
-    # TODO: Check if required folders are writeable by www-data
-    # Requires write permission on:
-    # - .env
-    # - composer.json
-    # - composer.lock
-    # - config/license.key
-    # - config/project/*
-    # - storage/*
-    # - vendor/*
-    # - web/cpresources/*
 fi
 
 exec "$@"
