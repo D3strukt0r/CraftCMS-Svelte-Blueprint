@@ -17,7 +17,7 @@ if (class_exists('Dotenv\Dotenv') && file_exists(CRAFT_BASE_PATH.'/.env')) {
 
 // Load and run Craft
 define('CRAFT_ENVIRONMENT', getenv('ENVIRONMENT') ?: 'prod');
-if (getenv('LICENSE_KEY_CRAFT')) {
+if (getenv('LICENSE_KEY') && strlen(getenv('LICENSE_KEY')) > 0) {
     define('CRAFT_LICENSE_KEY', getenv('LICENSE_KEY'));
 }
 /** @var craft\web\Application $app */
