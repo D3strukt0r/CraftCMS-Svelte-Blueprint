@@ -98,16 +98,8 @@ else
 fi
 
 if [[ $user_group_changed -eq 1 ]]; then
-    if [[ -w ./web/cpresources ]]; then
-        echo 'Setting owner of all files to www-data'
-        find . \
-            -exec chown www-data:www-data {} +
-    else
-        echo 'Setting owner of all files except /cpresources to www-data'
-        find . \
-            -path ./web/cpresources -prune \
-            -o -exec chown www-data:www-data {} +
-    fi
+    entrypoint_note 'Updating all folders and files according to new GID and UID'
+    find . -not -\( -user www-data -or -group www-data -\) -exec chown www-data:www-data {} +
 fi
 unset user_group_changed
 

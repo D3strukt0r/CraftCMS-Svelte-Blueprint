@@ -24,7 +24,7 @@ ARG USER_ID
 ARG GROUP_ID
 
 # hadolint ignore=DL3018
-RUN set -o errexit -o nounset -o xtrace; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     apk update; \
     apk upgrade; \
     apk add --no-cache \
@@ -42,7 +42,7 @@ RUN set -o errexit -o nounset -o xtrace; \
         # https://github.com/docker-library/php/issues/494
         openssl
 
-RUN set -o errexit -o nounset -o xtrace; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     # Custom bash config
     rm /etc/profile.d/color_prompt; \
     echo '. /etc/profile' >"$HOME/.bashrc"; \
@@ -73,7 +73,7 @@ FROM base AS base-php
 ENV PHP_DIR="/etc/php8"
 
 # hadolint ignore=DL3018
-RUN set -o errexit -o nounset -o xtrace; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     apk update; \
     apk add --no-cache \
         # Alpine package for "imagemagick" contains ~120 .so files,
@@ -113,7 +113,7 @@ RUN set -o errexit -o nounset -o xtrace; \
         php8-pecl-apcu \
         php8-pecl-imagick
 
-RUN set -o errexit -o nounset -o xtrace; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     # Fix missing default binaries
     ln --symbolic php8 /usr/bin/php; \
     ln --symbolic php-fpm8 /usr/sbin/php-fpm; \
@@ -145,7 +145,7 @@ STOPSIGNAL SIGQUIT
 EXPOSE 9000
 
 # https://github.com/renatomefi/php-fpm-healthcheck
-RUN set -o errexit -o nounset -o xtrace; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     curl --fail --silent --show-error --location \
         --output /usr/bin/php-fpm-healthcheck \
         https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck; \
@@ -153,7 +153,7 @@ RUN set -o errexit -o nounset -o xtrace; \
 HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 CMD php-fpm-healthcheck || exit 1
 
 COPY .docker/php/docker-entrypoint.sh /usr/bin/docker-entrypoint
-RUN set -o errexit -o nounset -o xtrace; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     chmod +x /usr/bin/docker-entrypoint
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]
@@ -166,7 +166,7 @@ FROM base AS base-nginx
 ENV NGINX_DIR="/etc/nginx"
 
 # hadolint ignore=DL3018
-RUN set -o errexit -o nounset -o xtrace; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     apk update; \
     apk add --no-cache \
         gettext \
@@ -174,7 +174,7 @@ RUN set -o errexit -o nounset -o xtrace; \
         # Nginx
         nginx
 
-RUN set -o errexit -o nounset -o xtrace; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     # Fix www folder already has content
     rm --recursive /var/www/*; \
     \
@@ -199,7 +199,7 @@ EXPOSE 80
 HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 CMD curl --fail http://127.0.0.1/ || exit 1
 
 COPY .docker/nginx/docker-entrypoint.sh /usr/bin/docker-entrypoint
-RUN set -o errexit -o nounset -o xtrace; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     chmod +x /usr/bin/docker-entrypoint
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["nginx", "-g", "daemon off;"]
@@ -212,12 +212,12 @@ FROM base-php AS base-php-dev
 ENV PATH="${PATH}:/home/www-data/.composer/vendor/bin"
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-RUN set -o errexit -o nounset -o xtrace; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     # Install XDebug
     apk add --no-cache \
         php8-pecl-xdebug
 
-RUN set -o errexit -o nounset -o xtrace; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     # Setup XDebug
     sed 's/;zend_extension=xdebug.so/zend_extension = xdebug.so/' -i "$PHP_DIR/conf.d/50_xdebug.ini"; \
     sed 's/;xdebug.mode=off/xdebug.mode = develop,debug/' -i "$PHP_DIR/conf.d/50_xdebug.ini"; \
@@ -244,7 +244,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # Prevent the reinstallation of vendors at every changes in the source code
 COPY --chown=www-data:www-data composer.json composer.lock ./
-RUN set -o errexit -o nounset -o xtrace; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     su --command 'composer install --prefer-dist --no-dev --no-scripts --no-progress --optimize-autoloader --no-interaction --no-plugins' www-data
 
 # -----------------------------------------------------------------------------
@@ -260,11 +260,12 @@ COPY --chown=www-data:www-data storage ./storage
 COPY --chown=www-data:www-data templates ./templates
 COPY --chown=www-data:www-data web ./web
 COPY --from=app-php-vendor --chown=www-data:www-data /var/www/vendor ./vendor
+COPY --from=app-php-vendor --chown=www-data:www-data /var/www/composer.json /var/www/composer.lock ./
 
-RUN set -o errexit -o nounset -o xtrace; \
-    chown --recursive www-data:www-data .; \
-    find . -type d -exec chmod u=rwx,g=rx,o=rx {} \;; \
-    find . -type f -exec chmod u=rw,g=r,o=r {} \;; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
+    find . -not -\( -user www-data -or -group www-data -\) -exec chown www-data:www-data {} +; \
+    find . -type d -a -not -perm u=rwx,g=rx,o=rx -exec chmod u=rwx,g=rx,o=rx {} +; \
+    find . -type f -a -not -perm u=rw,g=r,o=r -exec chmod u=rw,g=r,o=r {} +; \
     chmod +x craft
 
 # -----------------------------------------------------------------------------
@@ -274,11 +275,11 @@ FROM base-nginx AS app-nginx
 
 COPY --from=app-php --chown=www-data:www-data /var/www/web ./web
 
-RUN set -o errexit -o nounset -o xtrace; \
+RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     # Empty all php files (to reduce container size). Only the file's existence is important
-    find . -type f -name "*.php" -exec sh -c 'i="$1"; >"$i"' _ {} \;; \
+    find . -type f -name '*.php' -exec sh -c 'i="$1"; >"$i"' _ {} \;; \
     \
     # Fix permission
-    chown --recursive www-data:www-data .; \
-    find . -type d -exec chmod u=rwx,g=rx,o=rx {} \;; \
-    find . -type f -exec chmod u=rw,g=r,o=r {} \;
+    find . -not -\( -user www-data -or -group www-data -\) -exec chown www-data:www-data {} +; \
+    find . -type d -a -not -perm u=rwx,g=rx,o=rx -exec chmod u=rwx,g=rx,o=rx {} +; \
+    find . -type f -a -not -perm u=rw,g=r,o=r -exec chmod u=rw,g=r,o=r {} +

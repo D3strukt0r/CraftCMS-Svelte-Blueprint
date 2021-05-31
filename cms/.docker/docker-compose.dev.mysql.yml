@@ -81,7 +81,7 @@ services:
       # Craft database settings
       DB_DRIVER: mysql
       DB_SERVER: db
-      #DB_PORT: 3306
+      DB_PORT: 3306
       DB_USER: dbUser
       DB_PASSWORD: dbPassword
       DB_DATABASE: dbApp
