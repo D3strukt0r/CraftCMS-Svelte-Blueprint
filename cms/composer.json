@@ -39,25 +39,25 @@
         }
     ],
     "require": {
-        "craftcms/ckeditor": "1.1.2",
-        "craftcms/cms": "3.6.15",
-        "craftcms/commerce": "3.3.2",
-        "mmikkel/cp-field-inspect": "1.2.5",
-        "mutation/translate": "2.4.3",
-        "nystudio107/craft-minify": "1.2.10",
-        "nystudio107/craft-retour": "3.1.53",
-        "nystudio107/craft-seomatic": "3.3.42",
-        "ostark/craft-async-queue": "2.3.0",
-        "percipioglobal/craft-password-policy": "1.1.0",
-        "putyourlightson/craft-blitz": "3.9.0",
-        "solspace/craft-freeform": "3.11.4.1",
-        "studioespresso/craft-dumper": "2.0.0",
-        "verbb/navigation": "1.4.16",
+        "craftcms/ckeditor": "^1",
+        "craftcms/cms": "~3.6.15",
+        "craftcms/commerce": "^3",
+        "mmikkel/cp-field-inspect": "^1",
+        "mutation/translate": "^2",
+        "nystudio107/craft-minify": "^1",
+        "nystudio107/craft-retour": "^3",
+        "nystudio107/craft-seomatic": "^3",
+        "ostark/craft-async-queue": "^2",
+        "percipioglobal/craft-password-policy": "^1",
+        "putyourlightson/craft-blitz": "^3",
+        "solspace/craft-freeform": "^3",
+        "studioespresso/craft-dumper": "^2",
+        "verbb/navigation": "^1",
         "vlucas/phpdotenv": "^3"
     },
     "require-dev": {
         "liip/rmt": "^1",
-        "yiisoft/yii2-shell": "^2.0.3"
+        "yiisoft/yii2-shell": "^2"
     },
     "autoload": {
         "psr-4": {
