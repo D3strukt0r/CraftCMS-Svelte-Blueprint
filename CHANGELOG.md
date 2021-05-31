@@ -8,4 +8,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Nothing yet
 
-[Unreleased]: https://github.com/D3strukt0r/craft-blueprint/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/D3strukt0r/craftcms-blueprint/compare/1.0.0...HEAD

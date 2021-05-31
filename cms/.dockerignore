@@ -12,10 +12,10 @@
 **/docker-compose.*.yaml
 **/docker-compose.*.yml
 **/docker-compose.yaml
-docker-compose.dev.postgres.yml
+**/docker-compose.yml
 **/Dockerfile
 **/Thumbs.db
-.editorconfig
+**/.editorconfig
 **/.env.*.local
 **/.env.local
 **/.env.local.php
@@ -24,6 +24,7 @@ docker-compose.dev.postgres.yml
 **/.htaccess
 **/.github/
 **/.idea/
+**/.vscode/
 docker/mysql/
 docker/pgsql/
 docker/redis/

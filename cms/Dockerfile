@@ -119,7 +119,17 @@ RUN set -o errexit -o nounset -o xtrace; \
     ln --symbolic php-fpm8 /usr/sbin/php-fpm; \
     \
     # Link to production by default
-    ln --symbolic --force "$PHP_DIR/php.ini-production" "$PHP_DIR/php.ini"
+    ln --symbolic --force "$PHP_DIR/php.ini-production" "$PHP_DIR/php.ini"; \
+    \
+    # Create necessary folders and make writable
+    mkdir --parents /var/www/storage; \
+    mkdir --parents /var/www/storage/logs; \
+    mkdir --parents /var/www/storage/runtime; \
+    mkdir --parents /var/www/storage/runtime/compiled_templates; \
+    chown --recursive www-data:www-data /var/www/storage; \
+    \
+    mkdir --parents /var/www/web/cpresources; \
+    chown --recursive www-data:www-data /var/www/web/cpresources
 
 COPY .docker/php/conf/php.dev.ini       $PHP_DIR/php.ini-development
 COPY .docker/php/conf/php.prod.ini      $PHP_DIR/php.ini-production
@@ -252,7 +262,7 @@ COPY --chown=www-data:www-data web ./web
 COPY --from=app-php-vendor --chown=www-data:www-data /var/www/vendor ./vendor
 
 RUN set -o errexit -o nounset -o xtrace; \
-    chown www-data:www-data --recursive .; \
+    chown --recursive www-data:www-data .; \
     find . -type d -exec chmod u=rwx,g=rx,o=rx {} \;; \
     find . -type f -exec chmod u=rw,g=r,o=r {} \;; \
     chmod +x craft
@@ -269,6 +279,6 @@ RUN set -o errexit -o nounset -o xtrace; \
     find . -type f -name "*.php" -exec sh -c 'i="$1"; >"$i"' _ {} \;; \
     \
     # Fix permission
-    chown www-data:www-data --recursive .; \
+    chown --recursive www-data:www-data .; \
     find . -type d -exec chmod u=rwx,g=rx,o=rx {} \;; \
     find . -type f -exec chmod u=rw,g=r,o=r {} \;

@@ -48,7 +48,7 @@ services:
 
   php:
     build:
-      context: .
+      context: ../
       target: base-php-dev
     healthcheck:
       start_period: 1m40s
@@ -60,7 +60,12 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     volumes:
-      - .:/var/www
+      - craft-cpresources-dev:/var/www/web/cpresources:delegated
+      - craft-storage-dev:/var/www/storage:delegated
+      - ../storage/logs:/var/www/storage/logs:delegated
+      - ../storage/runtime/compiled_templates:/var/www/storage/runtime/compiled_templates:delegated
+      - ..:/var/www:cached
+      - ../vendor:/var/www/vendor:delegated
     environment:
       USER_ID: ${USER_ID:-0}
       GROUP_ID: ${GROUP_ID:-0}
@@ -107,7 +112,7 @@ services:
 
   nginx:
     build:
-      context: .
+      context: ../
       target: base-nginx
     healthcheck:
       test: test -e /var/run/nginx.pid || exit 1
@@ -117,7 +122,8 @@ services:
       - 80:80
       # - 443:443
     volumes:
-      - ./web:/var/www/web:ro,cached
+      - craft-cpresources-dev:/var/www/web/cpresources:ro,delegated
+      - ../web:/var/www/web:ro,cached
     environment:
       USER_ID: ${USER_ID:-0}
       GROUP_ID: ${GROUP_ID:-0}
@@ -126,3 +132,5 @@ services:
 volumes:
   mysql-dev:
   redis-dev:
+  craft-cpresources-dev:
+  craft-storage-dev:

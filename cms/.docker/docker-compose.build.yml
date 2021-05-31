@@ -3,7 +3,7 @@ version: '3.4'
 services:
   php:
     build:
-      context: .
+      context: ../
       target: app-php
       cache_from:
         - ${PHP_IMAGE:?PHP_IMAGE is not set or empty}
@@ -11,7 +11,7 @@ services:
 
   nginx:
     build:
-      context: .
+      context: ../
       target: app-nginx
       cache_from:
         - ${PHP_IMAGE:?PHP_IMAGE is not set or empty}

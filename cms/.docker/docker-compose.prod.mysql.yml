@@ -2,36 +2,38 @@ version: '3.4'
 
 services:
   db:
-    image: postgres:latest
+    image: mariadb:latest
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: [ 'CMD', 'pg_isready', '--username=dbUser', '--dbname=dbApp' ]
+      test: [ 'CMD', 'mysqladmin', 'ping', '--user=dbUser', '--password=dbPassword' ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
     volumes:
-      - postgres-dev:/var/lib/postgresql/data
+      - mysql-prod:/var/lib/mysql
     environment:
-      POSTGRES_USER: dbUser
-      POSTGRES_PASSWORD: dbPassword
-      POSTGRES_DB: dbApp
+      MYSQL_ROOT_PASSWORD: dbAdminPassword
+      MYSQL_USER: dbUser
+      MYSQL_PASSWORD: dbPassword
+      MYSQL_DATABASE: dbApp
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
     depends_on:
       - db
     ports:
       - 81:80
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@local.test
-      PGADMIN_DEFAULT_PASSWORD: dbAdminPassword
-    volumes:
-      - ./.docker/pgadmin/servers.json:/pgadmin4/servers.json:ro
+      UPLOAD_LIMIT: 100M
+      PMA_HOST: db
 
   redis:
-    image: redis:latest
+    image: redis
     command: redis-server --appendonly yes --requirepass redisPassword
     volumes:
-      - redis-dev:/data
+      - redis-prod:/data
 
   phpredisadmin:
     image: erikdubbelboer/phpredisadmin:latest
@@ -46,19 +48,15 @@ services:
 
   php:
     build:
-      context: .
-      target: base-php-dev
+      context: ../
+      target: app-php
     healthcheck:
       start_period: 1m40s
     depends_on:
       - db
       - redis
-    ports:
-      - 9003:9003
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
     volumes:
-      - .:/var/www
+      - craft-cpresources-prod:/var/www/web/cpresources:delegated
     environment:
       USER_ID: ${USER_ID:-0}
       GROUP_ID: ${GROUP_ID:-0}
@@ -67,19 +65,17 @@ services:
       PHP_MAX_EXECUTION_TIME: 0
 
       # Craft general settings
-      ENVIRONMENT: dev # dev, staging, prod
+      ENVIRONMENT: prod # dev, staging, prod
       APP_ID: CraftCMS--224c362b-5476-42f8-8c5b-1742fa24e4d5
       SECURITY_KEY: oA6-oxNqj2xtG1lTw9b6T6NOE9_SaEFz
 
       # Craft database settings
-      DB_DRIVER: pgsql
+      DB_DRIVER: mysql
       DB_SERVER: db
-      #DB_PORT: 5432
+      #DB_PORT: 3306
       DB_USER: dbUser
       DB_PASSWORD: dbPassword
       DB_DATABASE: dbApp
-      #DB_SCHEMA: public
-      #DB_TABLE_PREFIX:
 
       # URL & path settings
       ASSETS_URL: http://localhost/assets
@@ -107,8 +103,8 @@ services:
 
   nginx:
     build:
-      context: .
-      target: base-nginx
+      context: ../
+      target: app-nginx
     healthcheck:
       test: test -e /var/run/nginx.pid || exit 1
     depends_on:
@@ -117,12 +113,13 @@ services:
       - 80:80
       # - 443:443
     volumes:
-      - ./web:/var/www/web:ro,cached
+      - craft-cpresources-prod:/var/www/web/cpresources:ro,delegated
     environment:
       USER_ID: ${USER_ID:-0}
       GROUP_ID: ${GROUP_ID:-0}
       #USE_HTTPS: 'true'
 
 volumes:
-  postgres-dev:
-  redis-dev:
+  mysql-prod:
+  redis-prod:
+  craft-cpresources-prod:

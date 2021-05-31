@@ -15,4 +15,4 @@ Only the latest version is being supported.
 
 ## Reporting a Vulnerability
 
-If you find a vulnerability please report it on the [issues page](https://github.com/D3strukt0r/craft-blueprint/issues) and add the tag `vulnerability`. We will then try to find the fix as soon as possible.
+If you find a vulnerability please report it on the [issues page](https://github.com/D3strukt0r/craftcms-blueprint/issues) and add the tag `vulnerability`. We will then try to find the fix as soon as possible.

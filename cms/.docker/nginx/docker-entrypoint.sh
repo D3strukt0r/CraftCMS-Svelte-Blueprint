@@ -59,6 +59,8 @@ entrypoint_note 'Load various environment variables'
 envs=(
     NGINX_CLIENT_MAX_BODY_SIZE
     USE_HTTPS
+    GROUP_ID
+    USER_ID
 )
 
 # Set empty environment variable or get content from "/run/secrets/<something>"
@@ -66,26 +68,48 @@ for e in "${envs[@]}"; do
     file_env "$e"
 done
 
+# Fix mismatched host-container user id
+: "${USER_ID:=}"
+: "${GROUP_ID:=}"
+
 # Important for upload limit.
 : "${NGINX_CLIENT_MAX_BODY_SIZE:=100M}"
 
+# Other settings
 : "${USE_HTTPS:=false}"
 
 # -----------------------------------------------------------------------------
 
 # Fix mismatched host-container user id
+user_group_changed=
 if [[ -n $GROUP_ID && $GROUP_ID -ne 0 && $GROUP_ID -ne 82 ]]; then
     groupmod -g "$GROUP_ID" www-data
-    entrypoint_note "Settings GID of group www-data to $GROUP_ID"
+    user_group_changed=1
+    entrypoint_note "Setting GID of group www-data to $GROUP_ID"
 else
     entrypoint_warn 'Cannot set GID of group www-data to either 0 (root) or 82 (default of www-data)'
 fi
 if [[ -n $USER_ID && $USER_ID -ne 0 && $USER_ID -ne 82 ]]; then
     usermod -u "$USER_ID" www-data
-    entrypoint_note "Settings UID of user www-data to $USER_ID"
+    user_group_changed=1
+    entrypoint_note "Setting UID of user www-data to $USER_ID"
 else
     entrypoint_warn 'Cannot set UID of user www-data to either 0 (root) or 82 (default of www-data)'
 fi
+
+if [[ $user_group_changed -eq 1 ]]; then
+    if [[ -w ./web/cpresources ]]; then
+        echo 'Setting owner of all files to www-data'
+        find . \
+            -exec chown www-data:www-data {} +
+    else
+        echo 'Setting owner of all files except /cpresources to www-data'
+        find . \
+            -path ./web/cpresources -prune \
+            -o -exec chown www-data:www-data {} +
+    fi
+fi
+unset user_group_changed
 
 # -----------------------------------------------------------------------------
 

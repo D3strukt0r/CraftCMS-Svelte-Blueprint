@@ -36,7 +36,7 @@ Keep in mind as you contribute, that code, docs and other material submitted to 
 
 The details vary from project to project, but from the perspective of this document’s authors:
 
-* Anything submitted to a project falls under the licensing terms in the repository’s top level [LICENSE.md](LICENSE.md) file.
+* Anything submitted to a project falls under the licensing terms in the repository’s top level [LICENSE.md](../LICENSE.md) file.
 
   * For example, if a project’s LICENSE is BSD-based, contributors should be comfortable with their work potentially being distributed in binary form without the original source code.
 
@@ -86,11 +86,11 @@ We’ve found that test-first development really helps make features better arch
 
 ### Full example
 
-Here’s an example workflow for a project `theproject` hosted on Github, which is currently in version 1.3.x. Your username is `yourname` and you’re submitting a basic bugfix.
+Here’s an example workflow for a project `theproject` hosted on GitHub, which is currently in version 1.3.x. Your username is `yourname` and you’re submitting a basic bugfix.
 
 #### Preparing your Fork
 
-* Click ‘Fork’ on Github, creating e.g. `yourname/theproject`. 
+* Click ‘Fork’ on GitHub, creating e.g. `yourname/theproject`. 
 * Clone your project: `git clone git@github.com:yourname/theproject`.
 * `cd theproject`
 * Create and activate a virtual environment.
@@ -108,6 +108,6 @@ Here’s an example workflow for a project `theproject` hosted on Github, which 
 #### Creating Pull Requests
 
 * Push your commit to get it back up to your fork: `git push origin HEAD`
-* Visit Github, click handy “Pull request” button that it will make upon noticing your new branch.
+* Visit GitHub, click handy “Pull request” button that it will make upon noticing your new branch.
 * In the description field, write down issue number (if submitting code fixing an existing issue) or describe the issue + your fix (if submitting a wholly new bugfix).
 * Hit ‘submit’! And please be patient - the maintainers will get to you when they can.
