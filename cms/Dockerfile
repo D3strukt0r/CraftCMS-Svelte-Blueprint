@@ -2,9 +2,6 @@
 # https://docs.docker.com/develop/develop-images/multistage-build/#stop-at-a-specific-build-stage
 # https://docs.docker.com/compose/compose-file/#target
 
-ARG USER_ID
-ARG GROUP_ID
-
 # -----------------------------------------------------------------------------
 # Base OS
 # -----------------------------------------------------------------------------
@@ -19,9 +16,6 @@ ARG GROUP_ID
 FROM alpine:3.13 AS base
 
 LABEL maintainer="D3strukt0r <dev@d3strukt0r.me>"
-
-ARG USER_ID
-ARG GROUP_ID
 
 # hadolint ignore=DL3018
 RUN set -o errexit -o nounset -o pipefail -o xtrace; \
@@ -205,7 +199,7 @@ ENTRYPOINT ["docker-entrypoint"]
 CMD ["nginx", "-g", "daemon off;"]
 
 # -----------------------------------------------------------------------------
-# App (PHP Dev environment)
+# PHP base (Dev environment)
 # -----------------------------------------------------------------------------
 FROM base-php AS base-php-dev
 

@@ -37,6 +37,11 @@ Give examples
 
 ### Installing
 
+Inside the CraftCMS PHP container run:
+```shell
+./craft install --language de-CH --site-name 'Blueprint' --site-url \$SITE_URL --username admin --email admin@local.test --password 'password'
+```
+
 A step by step series of examples that tell you how to get a development env running
 
 Say what the step will be
