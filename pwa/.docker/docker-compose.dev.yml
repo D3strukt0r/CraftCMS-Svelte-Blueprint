@@ -1,10 +1,10 @@
 version: "3.4"
 
 services:
-  client:
+  pwa:
     build:
-      context: .
-      target: development
+      context: ../
+      target: app-nginx
     tty: true # https://github.com/facebook/create-react-app/issues/8688
     ports:
       - 80:3000
