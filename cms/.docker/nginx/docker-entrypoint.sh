@@ -99,7 +99,7 @@ fi
 
 if [[ $user_group_changed -eq 1 ]]; then
     entrypoint_note 'Updating all folders and files according to new GID and UID'
-    find . -not -\( -user www-data -or -group www-data -\) -exec chown www-data:www-data {} +
+    find . ! \( -user www-data -or -group www-data \) -a -writable -exec chown www-data:www-data {} +
 fi
 unset user_group_changed
 

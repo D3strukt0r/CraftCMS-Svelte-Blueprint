@@ -193,7 +193,7 @@ fi
 
 if [[ $user_group_changed -eq 1 ]]; then
     entrypoint_note 'Updating all folders and files according to new GID and UID'
-    find . -not -\( -user www-data -or -group www-data -\) -exec chown www-data:www-data {} +
+    find . ! \( -user www-data -or -group www-data \) -a -writable -exec chown www-data:www-data {} +
 fi
 unset user_group_changed
 
@@ -260,11 +260,15 @@ if [[ $1 == 'php-fpm' || $1 == 'php' ]]; then
     entrypoint_note 'Check if www-data has necessary write access'
 
     filesAndDirToCheck=(
-        #'.env'
-        #'config/license.key'
         'storage/'
         'web/cpresources/'
     )
+    if [[ -f .env ]]; then
+        filesAndDirToCheck+=('.env')
+    fi
+    if [[ -f config/license.key ]]; then
+        filesAndDirToCheck+=('config/license.key')
+    fi
 
     if [[ $ENVIRONMENT != 'prod' ]]; then
         filesAndDirToCheck+=(

@@ -120,10 +120,8 @@ RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     mkdir --parents /var/www/storage/logs; \
     mkdir --parents /var/www/storage/runtime; \
     mkdir --parents /var/www/storage/runtime/compiled_templates; \
-    chown --recursive www-data:www-data /var/www/storage; \
-    \
     mkdir --parents /var/www/web/cpresources; \
-    chown --recursive www-data:www-data /var/www/web/cpresources
+    chown --recursive www-data:www-data /var/www
 
 COPY .docker/php/conf/php.dev.ini       $PHP_DIR/php.ini-development
 COPY .docker/php/conf/php.prod.ini      $PHP_DIR/php.ini-production
