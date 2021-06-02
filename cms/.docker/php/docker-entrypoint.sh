@@ -312,7 +312,7 @@ if [[ $1 == 'php-fpm' || $1 == 'php' ]]; then
     if [[ $ENVIRONMENT != 'prod' && $(command -v composer) && -f composer.json ]]; then
         entrypoint_note 'Installing libraries according to non-production environment ...'
 
-        su --command 'composer install --prefer-dist --no-scripts --no-progress --optimize-autoloader --no-interaction --no-plugins' www-data
+        su --command 'composer install --no-scripts --no-progress --no-interaction' www-data
     fi
 
     # -------------------------------------------------------------------------

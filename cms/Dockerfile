@@ -237,7 +237,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 # Prevent the reinstallation of vendors at every changes in the source code
 COPY --chown=www-data:www-data composer.json composer.lock ./
 RUN set -o errexit -o nounset -o pipefail -o xtrace; \
-    su --command 'composer install --prefer-dist --no-dev --no-scripts --no-progress --optimize-autoloader --no-interaction --no-plugins' www-data
+    su --command 'composer install --no-dev --no-scripts --no-progress --optimize-autoloader --no-interaction' www-data
 
 # -----------------------------------------------------------------------------
 # App (PHP environment)
