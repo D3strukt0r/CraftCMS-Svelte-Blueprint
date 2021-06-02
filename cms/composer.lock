@@ -664,16 +664,16 @@
         },
         {
             "name": "craftcms/cms",
-            "version": "3.6.15",
+            "version": "3.6.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/craftcms/cms.git",
-                "reference": "7a0c70fd7c7d46cbeb993d345a4b47c968bdd82a"
+                "reference": "e393adc8419f39c2047b211289eb813b5e1869b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craftcms/cms/zipball/7a0c70fd7c7d46cbeb993d345a4b47c968bdd82a",
-                "reference": "7a0c70fd7c7d46cbeb993d345a4b47c968bdd82a",
+                "url": "https://api.github.com/repos/craftcms/cms/zipball/e393adc8419f39c2047b211289eb813b5e1869b3",
+                "reference": "e393adc8419f39c2047b211289eb813b5e1869b3",
                 "shasum": ""
             },
             "require": {
@@ -763,20 +763,20 @@
                 "rss": "https://github.com/craftcms/cms/releases.atom",
                 "source": "https://github.com/craftcms/cms"
             },
-            "time": "2021-05-18T21:47:23+00:00"
+            "time": "2021-06-01T18:14:34+00:00"
         },
         {
             "name": "craftcms/commerce",
-            "version": "3.3.2",
+            "version": "3.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/craftcms/commerce.git",
-                "reference": "e748b711fcf2d61eec17891d95f1820c423b2e9e"
+                "reference": "bdf18bd6806c5f9263f8dc24a379287e62dfbe9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craftcms/commerce/zipball/e748b711fcf2d61eec17891d95f1820c423b2e9e",
-                "reference": "e748b711fcf2d61eec17891d95f1820c423b2e9e",
+                "url": "https://api.github.com/repos/craftcms/commerce/zipball/bdf18bd6806c5f9263f8dc24a379287e62dfbe9f",
+                "reference": "bdf18bd6806c5f9263f8dc24a379287e62dfbe9f",
                 "shasum": ""
             },
             "require": {
@@ -829,7 +829,7 @@
                 "rss": "https://github.com/craftcms/commerce/releases.atom",
                 "source": "https://github.com/craftcms/commerce"
             },
-            "time": "2021-05-18T22:01:08+00:00"
+            "time": "2021-06-01T17:02:11+00:00"
         },
         {
             "name": "craftcms/oauth2-craftid",
@@ -2788,16 +2788,16 @@
         },
         {
             "name": "markbaker/complex",
-            "version": "2.0.2",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/MarkBaker/PHPComplex.git",
-                "reference": "d18272926d58065140314c01e18ec3dd7ae854ea"
+                "reference": "6f724d7e04606fd8adaa4e3bb381c3e9db09c946"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MarkBaker/PHPComplex/zipball/d18272926d58065140314c01e18ec3dd7ae854ea",
-                "reference": "d18272926d58065140314c01e18ec3dd7ae854ea",
+                "url": "https://api.github.com/repos/MarkBaker/PHPComplex/zipball/6f724d7e04606fd8adaa4e3bb381c3e9db09c946",
+                "reference": "6f724d7e04606fd8adaa4e3bb381c3e9db09c946",
                 "shasum": ""
             },
             "require": {
@@ -2877,9 +2877,9 @@
             ],
             "support": {
                 "issues": "https://github.com/MarkBaker/PHPComplex/issues",
-                "source": "https://github.com/MarkBaker/PHPComplex/tree/2.0.2"
+                "source": "https://github.com/MarkBaker/PHPComplex/tree/2.0.3"
             },
-            "time": "2021-05-24T10:53:30+00:00"
+            "time": "2021-06-02T09:44:11+00:00"
         },
         {
             "name": "markbaker/matrix",
@@ -7242,16 +7242,16 @@
         },
         {
             "name": "symfony/property-info",
-            "version": "v5.3.0",
+            "version": "v5.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/property-info.git",
-                "reference": "64d7dfb197749b0e00c6d8dcd5629fd6fac352f7"
+                "reference": "6f8bff281f215dbf41929c7ec6f8309cdc0912cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/property-info/zipball/64d7dfb197749b0e00c6d8dcd5629fd6fac352f7",
-                "reference": "64d7dfb197749b0e00c6d8dcd5629fd6fac352f7",
+                "url": "https://api.github.com/repos/symfony/property-info/zipball/6f8bff281f215dbf41929c7ec6f8309cdc0912cf",
+                "reference": "6f8bff281f215dbf41929c7ec6f8309cdc0912cf",
                 "shasum": ""
             },
             "require": {
@@ -7312,7 +7312,7 @@
                 "validator"
             ],
             "support": {
-                "source": "https://github.com/symfony/property-info/tree/v5.3.0"
+                "source": "https://github.com/symfony/property-info/tree/v5.3.1"
             },
             "funding": [
                 {
@@ -7328,7 +7328,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-05-26T17:43:10+00:00"
+            "time": "2021-05-31T12:40:48+00:00"
         },
         {
             "name": "symfony/service-contracts",
