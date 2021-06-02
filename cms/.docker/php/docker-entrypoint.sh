@@ -312,7 +312,14 @@ if [[ $1 == 'php-fpm' || $1 == 'php' ]]; then
     if [[ $ENVIRONMENT != 'prod' && $(command -v composer) && -f composer.json ]]; then
         entrypoint_note 'Installing libraries according to non-production environment ...'
 
-        su --command 'composer install --no-scripts --no-progress --no-interaction' www-data
+        # Do a `composer install` without running any Composer scripts
+        # - If `composer.lock` is present, it will install what is in the lock file
+        # - If `composer.lock` is missing, it will update to the latest dependencies
+        #   and create the `composer.lock` file
+        # This automatic running adds to the startup overhead of `docker-compose up`
+        # but saves far more time in not having to deal with out of sync versions
+        # when working with teams or multiple environments
+        su --command 'composer install --no-scripts --no-progress --optimize-autoloader --no-interaction' www-data
     fi
 
     # -------------------------------------------------------------------------
