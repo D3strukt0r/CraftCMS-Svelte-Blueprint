@@ -252,7 +252,6 @@ COPY --chown=www-data:www-data storage ./storage
 COPY --chown=www-data:www-data templates ./templates
 COPY --chown=www-data:www-data web ./web
 COPY --from=app-php-vendor --chown=www-data:www-data /var/www/vendor ./vendor
-COPY --from=app-php-vendor --chown=www-data:www-data /var/www/composer.json /var/www/composer.lock ./
 
 RUN set -o errexit -o nounset -o pipefail -o xtrace; \
     find . -not -\( -user www-data -or -group www-data -\) -exec chown www-data:www-data {} +; \
