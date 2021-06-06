@@ -1,6 +1,5 @@
 **/*.log
 **/*.md
-**/*.php~
 **/*.bat
 **/._*
 **/.dockerignore
@@ -18,8 +17,6 @@
 **/.editorconfig
 **/.env.*.local
 **/.env.local
-# **/*.test.tsx
-.github/
-.idea/
-.vscode/
+**/*.test.tsx
 build/
+node_modules/

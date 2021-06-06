@@ -6,7 +6,7 @@ set -o errexit -o nounset -o pipefail
 
 # If command starts with an option (`-f` or `--some-option`), prepend main command
 if [[ "${1#-}" != "$1" ]]; then
-    set -- nginx "$@"
+    set -- node "$@"
 fi
 
 # -----------------------------------------------------------------------------
@@ -57,8 +57,6 @@ file_env() {
 # Setup environment variables
 entrypoint_note 'Load various environment variables'
 envs=(
-    NGINX_CLIENT_MAX_BODY_SIZE
-    USE_HTTPS
     GROUP_ID
     USER_ID
 )
@@ -71,12 +69,6 @@ done
 # Fix mismatched host-container user id
 : "${USER_ID:=}"
 : "${GROUP_ID:=}"
-
-# Important for upload limit.
-: "${NGINX_CLIENT_MAX_BODY_SIZE:=100M}"
-
-# Other settings
-: "${USE_HTTPS:=false}"
 
 # -----------------------------------------------------------------------------
 
@@ -106,44 +98,12 @@ unset user_group_changed
 # -----------------------------------------------------------------------------
 
 # Prepare nginx
-if [[ $1 == 'nginx' ]]; then
-    entrypoint_note 'Entrypoint script for Nginx (frontend) started'
+if [[ $1 == 'node' ]]; then
+    entrypoint_note 'Entrypoint script for NodeJS (frontend) started'
 
     # -------------------------------------------------------------------------
 
     entrypoint_note 'Check necessary environment variables'
-
-    # -------------------------------------------------------------------------
-
-    # https://github.com/docker-library/docs/issues/496#issuecomment-287927576
-    # shellcheck disable=SC2016,SC2046
-    envsubst "$(printf '${%s} ' $(compgen -A variable))" </etc/nginx/nginx.template >/etc/nginx/nginx.conf
-    if [[ $USE_HTTPS == 'true' ]]; then
-        if [[ ! -f /certs/website.crt || ! -f /certs/website.key ]]; then
-            if [[ ! -d /certs ]]; then
-                mkdir /certs
-            fi
-            cd /certs
-
-            entrypoint_note 'Creating SSL certificate ...'
-            openssl req -new -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out website.crt -keyout website.key -subj "/C=/ST=/L=/O=/OU=/CN="
-        fi
-
-        # Link files
-        entrypoint_note 'Linking certificate to /etc/ssl/certs/* ...'
-        ln -sf /certs/website.crt /etc/ssl/certs/website.crt
-        ln -sf /certs/website.key /etc/ssl/certs/website.key
-
-        entrypoint_note 'Enabling HTTPS for nginx ...'
-        if [[ ! -f /etc/nginx/conf.d/default-ssl.conf ]]; then
-            # shellcheck disable=SC2016,SC2046
-            envsubst "$(printf '${%s} ' $(compgen -A variable))" </etc/nginx/http.d/default-ssl.template >/etc/nginx/http.d/default-ssl.conf
-        fi
-    else
-        entrypoint_note 'Enabling HTTP for nginx ...'
-        # shellcheck disable=SC2016,SC2046
-        envsubst "$(printf '${%s} ' $(compgen -A variable))" </etc/nginx/http.d/default.template >/etc/nginx/http.d/default.conf
-    fi
 fi
 
 exec "$@"

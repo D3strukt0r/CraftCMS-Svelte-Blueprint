@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  pwa-nginx:
+    build:
+      context: ../
+      target: app-nginx
+    healthcheck:
+      test: test -e /var/run/nginx.pid || exit 1
+    ports:
+      - 80:80
+      # - 443:443
+    environment:
+      USER_ID: ${USER_ID:-0}
+      GROUP_ID: ${GROUP_ID:-0}
+      #USE_HTTPS: 'true'
