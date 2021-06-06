@@ -20,11 +20,8 @@
 **/.env.local
 **/.env.local.php
 **/.php_cs.cache
-**/codeception.yml
 **/.htaccess
-**/.github/
-**/.idea/
-**/.vscode/
+**/web.config
 docker/mysql/
 docker/pgsql/
 docker/redis/
@@ -37,4 +34,3 @@ storage/runtime
 tests/
 vendor/
 web/cpresources
-web/web.config

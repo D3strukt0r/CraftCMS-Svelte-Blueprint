@@ -46,7 +46,7 @@ services:
     ports:
       - 82:80
 
-  php:
+  cms-php:
     build:
       context: ../
       target: base-php-dev
@@ -110,7 +110,7 @@ services:
       # Google Analytics settings
       # GA_TRACKING_ID:
 
-  nginx:
+  cms-nginx:
     build:
       context: ../
       target: base-nginx

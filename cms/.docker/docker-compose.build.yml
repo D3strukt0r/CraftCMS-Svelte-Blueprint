@@ -1,7 +1,7 @@
 version: '3.4'
 
 services:
-  php:
+  cms-php:
     build:
       context: ../
       target: app-php
@@ -9,7 +9,7 @@ services:
         - ${PHP_IMAGE:?PHP_IMAGE is not set or empty}
     image: ${PHP_IMAGE:?PHP_IMAGE is not set or empty}
 
-  nginx:
+  cms-nginx:
     build:
       context: ../
       target: app-nginx
