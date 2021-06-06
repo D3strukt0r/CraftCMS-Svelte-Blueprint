@@ -120,7 +120,7 @@ services:
     healthcheck:
       test: test -e /var/run/nginx.pid || exit 1
     depends_on:
-      - php
+      - cms-php
     ports:
       # HTTP
       - '80:80'
