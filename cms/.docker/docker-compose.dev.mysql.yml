@@ -24,7 +24,8 @@ services:
     depends_on:
       - db
     ports:
-      - 81:80
+      # HTTP
+      - '81:80'
     environment:
       UPLOAD_LIMIT: 100M
       PMA_HOST: db
@@ -44,7 +45,8 @@ services:
     depends_on:
       - redis
     ports:
-      - 82:80
+      # HTTP
+      - '82:80'
 
   cms-php:
     build:
@@ -56,7 +58,8 @@ services:
       - db
       - redis
     ports:
-      - 9003:9003
+      # XDebug
+      - '9003:9003'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     volumes:
@@ -119,8 +122,12 @@ services:
     depends_on:
       - php
     ports:
-      - 80:80
-      # - 443:443
+      # HTTP
+      - '80:80'
+      # HTTPS
+      #- '443:443'
+      # HTTP/3
+      #- '443:443/udp'
     volumes:
       - craft-cpresources-dev:/var/www/web/cpresources:ro,delegated
       - ../web:/var/www/web:ro,cached

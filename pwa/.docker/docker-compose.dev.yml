@@ -7,7 +7,8 @@ services:
       target: base-node-dev
     tty: true # https://github.com/facebook/create-react-app/issues/8688
     ports:
-      - 80:3000
+      # HTTP
+      - '80:3000'
     volumes:
       - ..:/var/www:cached
       - ../node_modules:/var/www/node_modules:delegated

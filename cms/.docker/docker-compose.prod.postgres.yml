@@ -20,7 +20,8 @@ services:
     depends_on:
       - db
     ports:
-      - 81:80
+      # HTTP
+      - '81:80'
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@local.test
       PGADMIN_DEFAULT_PASSWORD: dbAdminPassword
@@ -42,7 +43,8 @@ services:
     depends_on:
       - redis
     ports:
-      - 82:80
+      # HTTP
+      - '82:80'
 
   cms-php:
     build:
@@ -110,8 +112,12 @@ services:
     depends_on:
       - php
     ports:
-      - 80:80
-      # - 443:443
+      # HTTP
+      - '80:80'
+      # HTTPS
+      #- '443:443'
+      # HTTP/3
+      #- '443:443/udp'
     volumes:
       - craft-cpresources-prod:/var/www/web/cpresources:ro,delegated
     environment:

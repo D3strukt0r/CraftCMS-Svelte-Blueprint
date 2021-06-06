@@ -8,8 +8,12 @@ services:
     healthcheck:
       test: test -e /var/run/nginx.pid || exit 1
     ports:
-      - 80:80
-      # - 443:443
+      # HTTP
+      - '80:80'
+      # HTTPS
+      #- '443:443'
+      # HTTP/3
+      #- '443:443/udp'
     environment:
       USER_ID: ${USER_ID:-0}
       GROUP_ID: ${GROUP_ID:-0}
