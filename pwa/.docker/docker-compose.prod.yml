@@ -1,9 +1,7 @@
-version: '3.4'
-
 services:
   pwa-nginx:
     build:
-      context: ../
+      context: pwa/
       target: app-nginx
     healthcheck:
       test: test -e /var/run/nginx.pid || exit 1

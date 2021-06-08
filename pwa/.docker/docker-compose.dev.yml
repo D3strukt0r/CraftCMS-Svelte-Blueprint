@@ -1,21 +1,20 @@
-version: "3.4"
-
 services:
   pwa-node:
     build:
-      context: ../
+      context: pwa/
       target: base-node-dev
     tty: true # https://github.com/facebook/create-react-app/issues/8688
     ports:
       # HTTP
       - '80:3000'
     volumes:
-      - ..:/var/www:cached
-      - ../node_modules:/var/www/node_modules:delegated
-      - ../src:/var/www/src:cached
+      - ./pwa:/var/www:cached
+      - ./pwa/node_modules:/var/www/node_modules:delegated
+      - ./pwa/src:/var/www/src:cached
     environment:
       USER_ID: ${USER_ID:-0}
       GROUP_ID: ${GROUP_ID:-0}
 
       # General settings
-      ENVIRONMENT: dev # dev, staging, prod
+      # dev, staging, prod
+      ENVIRONMENT: dev

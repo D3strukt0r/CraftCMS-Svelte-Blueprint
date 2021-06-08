@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:latest
+    healthcheck:
+      test: [ 'CMD', 'pg_isready', '--username=dbUser', '--dbname=dbApp' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - db-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: dbUser
+      POSTGRES_PASSWORD: dbPassword
+      POSTGRES_DB: dbApp
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    depends_on:
+      - db
+    ports:
+      # HTTP
+      - '81:80'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local.test
+      PGADMIN_DEFAULT_PASSWORD: dbAdminPassword
+    volumes:
+      - ./cms/.docker/pgadmin/servers.json:/pgadmin4/servers.json:ro
+
+volumes:
+  db-postgres:

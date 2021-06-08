@@ -1,0 +1,170 @@
+#!/bin/bash
+
+console_text_green="\x1B[32m"
+console_text_red="\x1B[31m"
+console_text_white="\x1B[39m"
+
+QUIET=false
+PREFERRED_DB_TYPE=
+
+function log() {
+    [[ ! $QUIET == true ]] && echo -e "$1"
+}
+function log_success() {
+    [[ ! $QUIET == true ]] && echo -e "$console_text_green>> $1$console_text_white"
+}
+function log_error() {
+    >&2 echo -e "$console_text_red>> $1$console_text_white"
+}
+
+# -----------------------------------------------------------------------------
+
+usage() {
+    echo "usage: $0 [options]"
+    echo "   ie: $0 --db mysql"
+    echo "       $0 -q -d mysql"
+    echo
+    echo 'Possible values for options:'
+    echo '  -?|-h|--help           Opens help page'
+    echo '  -q|--QUIET             Mutes notes'
+    echo '  -d|--db <mysql|pgsql>  Select db flavor'
+}
+
+# $@ is all command line parameters passed to the script.
+# -o/--options is for short options like -v
+# -l/--longoptions is for long options with double dash like --version
+# the comma separates different long options
+# -a/--alternative is for long options with single dash like -version
+PARSED_ARGUMENTS="$(getopt --options h?qd: --longoptions help,quiet,db: --alternative -- "$@" || { usage >&2 && false; })"
+
+# set --:
+# If no arguments follow this option, then the positional parameters are unset. Otherwise, the positional parameters
+# are set to the arguments, even if some of them begin with a ‘-’.
+eval set -- "$PARSED_ARGUMENTS"
+
+while true; do
+    case "$1" in
+        -h | '-?' | --help)
+            usage
+            exit 0
+            ;;
+        -q | --quiet)
+            QUIET=true
+            shift
+            ;;
+        -d | --db)
+            PREFERRED_DB_TYPE="$2"
+            shift 2
+            ;;
+        # -- means the end of the arguments; drop this, and break out of the while loop
+        --)
+            shift
+            break
+            ;;
+        # If invalid options were passed, then getopt should have reported an error,
+        # which we checked as PARSED_ARGUMENTS when getopt was called...
+        *)
+            {
+                echo "Unexpected option: $1"
+                usage
+            } >&2
+            exit 1
+            ;;
+    esac
+done
+
+# -----------------------------------------------------------------------------
+
+log 'Checking system for requirements ...'
+
+has_missing_requirement=false
+
+if [[ -x "$(command -v docker)" ]]; then
+    log_success 'docker is installed'
+else
+    has_missing_requirement=true
+    log_error 'docker is not installed. Please visit https://docs.docker.com/get-docker/'
+fi
+
+if [[ -x "$(command -v docker-compose)" ]]; then
+    log_success 'docker-compose is installed'
+else
+    has_missing_requirement=true
+    log_error 'docker-compose is not installed. Please visit https://docs.docker.com/compose/install/'
+fi
+
+if [[ -x "$(command -v make)" ]]; then
+    log_success 'make is installed'
+else
+    has_missing_requirement=true
+    log_error 'make is not installed. Please visit https://www.gnu.org/software/make/'
+fi
+
+if [[ -x "$(command -v yq)" ]]; then
+    log_success 'yq is installed'
+else
+    has_missing_requirement=true
+    log_error 'yq is not installed. Please visit https://github.com/mikefarah/yq'
+fi
+
+if [[ $has_missing_requirement == true ]]; then
+    log_error 'Please install the missing requirements before continuing'
+    exit 1
+fi
+
+# -----------------------------------------------------------------------------
+
+if [[ -z $PREFERRED_DB_TYPE ]]; then
+    PS3='What database flavor do you prefer? '
+    select opt in 'PostgreSQL' 'MySQL' 'Quit'; do
+        case $opt in
+            "PostgreSQL")
+                PREFERRED_DB_TYPE='pgsql'
+                break
+                ;;
+            "MySQL")
+                PREFERRED_DB_TYPE='mysql'
+                break
+                ;;
+            "Quit")
+                break
+                ;;
+            *)
+                echo "Invalid option $REPLY"
+                ;;
+        esac
+    done
+fi
+
+# -----------------------------------------------------------------------------
+
+yq merge \
+    .docker/docker-compose.common.yml \
+    cms/.docker/docker-compose.db-$PREFERRED_DB_TYPE.yml \
+    cms/.docker/docker-compose.dev.yml \
+    pwa/.docker/docker-compose.dev.yml \
+    --prettyPrint --indent 2 >docker-compose.yml
+return_copy_docker_dev=$?
+yq merge \
+    .docker/docker-compose.common.yml \
+    cms/.docker/docker-compose.db-$PREFERRED_DB_TYPE.yml \
+    cms/.docker/docker-compose.prod.yml \
+    pwa/.docker/docker-compose.prod.yml \
+    --prettyPrint --indent 2 >docker-compose.prod.yml
+return_copy_docker_prod=$?
+
+if (( return_copy_docker_dev == 0 && return_copy_docker_prod == 0 )); then
+    log_success 'docker-compose files created'
+else
+    log_error 'Failed at creating docker-compose files'
+    exit 1
+fi
+
+cp Makefile.in Makefile
+return_copy_make=$?
+
+if (( return_copy_make == 0 )); then
+    log_success 'Makefile created'
+else
+    log_error 'Failed at creating Makefile'
+fi

@@ -1,0 +1,96 @@
+SHELL:=/bin/bash
+
+console_text_green = \x1B[32m
+console_text_red = \x1B[31m
+console_text_white = \x1B[39m
+log_success = (echo -e "$(console_text_green)>> $1$(console_text_white)")
+log_error = (>&2 echo -e "$(console_text_red)>> $1$(console_text_white)" && exit 1)
+
+CMS_CONTAINER_NAME?=$(shell basename $(CURDIR))_cms-php_1
+PWA_CONTAINER_NAME?=$(shell basename $(CURDIR))_pwa-node_1
+
+.PHONY: all dev prod build clean composer craft yarn update update-clean down up prod-up
+
+# First command also executes with "make" only as well
+all: dev
+
+dev: up
+
+prod: prod-up
+
+build: up
+	docker-compose exec pwa-node yarn run build
+
+clean:
+	docker-compose down --volumes
+	docker-compose up --build
+
+composer: up
+	docker-compose exec cms-php composer $(filter-out $@,$(MAKECMDGOALS))
+
+craft: up
+	docker-compose exec cms-php php craft $(filter-out $@,$(MAKECMDGOALS))
+
+yarn: up
+	docker-compose exec pwa-node yarn $(filter-out $@,$(MAKECMDGOALS))
+
+#pulldb: up
+#	cd scripts/ && ./docker_pull_db.sh
+#
+#restoredb: up
+#	cd scripts/ && ./docker_restore_db.sh $(filter-out $@,$(MAKECMDGOALS))
+
+update: down
+	# Update Docker images
+	docker-compose pull
+	docker-compose build
+
+	# Update dependencies
+	docker-compose run cms-php composer update --no-scripts --no-progress --optimize-autoloader --no-interaction
+	docker-compose run cms-php php craft update
+	docker-compose run pwa-node /bin/bash -c 'yarn install && yarn upgrade'
+
+	${MAKE} up
+
+update-clean: down
+	rm -f cms/composer.lock
+	rm -rf cms/vendor/
+
+	rm -f pwa/yarn.lock
+	rm -rf pwa/node_modules/
+
+	${MAKE} up
+
+down:
+	@if [[ \
+    		-z `docker-compose ps --quiet ${CMS_CONTAINER_NAME}` \
+    		|| -z `docker ps --quiet --no-trunc | grep $$(docker-compose ps --quiet ${CMS_CONTAINER_NAME})` \
+	]]; then \
+	  docker-compose down; \
+	fi
+	@if [[ \
+		-z `docker-compose --file docker-compose.prod.yml ps --quiet ${CMS_CONTAINER_NAME}` \
+		|| -z `docker ps --quiet --no-trunc | grep $$(docker-compose --file docker-compose.prod.yml ps --quiet ${CMS_CONTAINER_NAME})` \
+	]]; then \
+	  docker-compose --file docker-compose.prod.yml down; \
+	fi
+
+up:
+	@if [[ \
+		-z `docker-compose ps --quiet ${CMS_CONTAINER_NAME}` \
+		|| -z `docker ps --quiet --no-trunc | grep $$(docker-compose ps --quiet ${CMS_CONTAINER_NAME})` \
+	]]; then \
+	  docker-compose up; \
+	fi
+
+prod-up:
+	@if [[ \
+		-z `docker-compose --file docker-compose.prod.yml ps --quiet ${CMS_CONTAINER_NAME}` \
+		|| -z `docker ps --quiet --no-trunc | grep $$(docker-compose --file docker-compose.prod.yml ps --quiet ${CMS_CONTAINER_NAME})` \
+	]]; then \
+	  docker-compose --file docker-compose.prod.yml up; \
+	fi
+
+%:
+	@:
+# ref: https://stackoverflow.com/questions/6273608/how-to-pass-argument-to-makefile-from-command-line

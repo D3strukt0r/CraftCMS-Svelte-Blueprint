@@ -194,3 +194,5 @@ $RECYCLE.BIN/
 
 ### Other ###
 /docker-compose.yml
+/docker-compose.*.yml
+/Makefile
