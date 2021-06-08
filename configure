@@ -1,20 +1,69 @@
 #!/bin/bash
 
-console_text_green="\x1B[32m"
-console_text_red="\x1B[31m"
-console_text_white="\x1B[39m"
+set -o errexit -o nounset -o pipefail
 
 QUIET=false
 PREFERRED_DB_TYPE=
+
+# -----------------------------------------------------------------------------
+
+console_text_red="\033[31m"
+console_text_green="\033[32m"
+console_text_orange="\033[33m"
+console_text_no_color="\033[0m"
 
 function log() {
     [[ ! $QUIET == true ]] && echo -e "$1"
 }
 function log_success() {
-    [[ ! $QUIET == true ]] && echo -e "$console_text_green>> $1$console_text_white"
+    [[ ! $QUIET == true ]] && echo -e "$console_text_green>> $1$console_text_no_color"
+}
+function log_warning() {
+    [[ ! $QUIET == true ]] && echo -e "$console_text_orange>> $1$console_text_no_color"
 }
 function log_error() {
-    >&2 echo -e "$console_text_red>> $1$console_text_white"
+    >&2 echo -e "$console_text_red>> $1$console_text_no_color"
+}
+
+# Gets the settings value inside a .env file containing key=value elements.
+#
+# usage: getProperties <filename> <key>
+getDotEnv() {
+    if [ -s "$1" ]; then
+        # https://gist.github.com/marcelbirkner/9b133f800d7d3fc5d828#gistcomment-2855532
+        var=$(sed -n "/^[ tab]*$2[ tab]*/p" "$1")
+        if [[ $var =~ ^([ tab]*"$2"[ tab]*=)(.*) ]]; then
+            echo "${BASH_REMATCH[2]}"
+        fi
+    fi
+}
+
+# Changes the settings in a .env file containing key=value elements.
+#
+# usage: setProperties <filename> <key> <value>
+setDotEnv() {
+    # Create the file if it doesn't exist yet
+    if [ ! -f "$1" ]; then
+        touch "$1"
+    fi
+
+    # Check if the key exists
+    grep -q "^$2\s*\=" "$1"
+
+    if [ $? -ne 0 ]; then
+        # If it doesn't exist, add new line
+        echo "$2=$3" >>"$1"
+    else
+        # Otherwise, overwrite the line
+        sed -i "/^$2\s*=/ c $2=$3" "$1"
+    fi
+
+    # Return state
+    if [ $? -eq 0 ]; then
+        return 0 # OK
+    else
+        return 1 # FAIL
+    fi
 }
 
 # -----------------------------------------------------------------------------
@@ -167,4 +216,15 @@ if (( return_copy_make == 0 )); then
     log_success 'Makefile created'
 else
     log_error 'Failed at creating Makefile'
+fi
+
+if [[ ! -f .env && -f .env.dist ]]; then
+    cp .env.dist .env
+    return_copy_dotenv=$?
+
+    if (( return_copy_dotenv == 0 )); then
+        log_success '.env created'
+    else
+        log_warning 'Failed at creating .env'
+    fi
 fi
