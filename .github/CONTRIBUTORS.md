@@ -1,8 +1,8 @@
 # Contributors
 
-## Special thanks for all the people who had helped this project so far:
+## Special thanks for all the people who had helped this project so far
 
-No one, yet :)
+No one, yet 🙂
 
 See also the full list of [contributors](https://github.com/D3strukt0r/craftcms-blueprint/contributors) who participated in this project.
 

@@ -9,18 +9,20 @@ Project
 [![Docker Pulls](https://img.shields.io/docker/pulls/d3strukt0r/craftcms-blueprint-nginx.svg?label=docker%20pulls%20(nginx))][docker-nginx]
 [![Docker Stars](https://img.shields.io/docker/stars/d3strukt0r/craftcms-blueprint-php.svg?label=docker%20stars%20(php))][docker-php]
 [![Docker Pulls](https://img.shields.io/docker/pulls/d3strukt0r/craftcms-blueprint-php.svg?label=docker%20pulls%20(php))][docker-php]
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](CODE_OF_CONDUCT.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](.github/CODE_OF_CONDUCT.md)
 
-master-branch (alias stable, latest)
+main-branch (alias stable, latest)
 
-[![GH Action CI/CD](https://github.com/D3strukt0r/craftcms-blueprint/workflows/CI/CD/badge.svg?branch=master)][gh-action]
-<!--[![Codacy grade](https://img.shields.io/codacy/grade/96966fb63138492e9657bafc6adefa2b/master)][codacy]-->
+[![GH Action CI/CD](https://github.com/D3strukt0r/craftcms-blueprint/workflows/CI/CD/badge.svg?branch=main)][gh-action]
+<!--
+[![Codacy grade](https://img.shields.io/codacy/grade/{id}/main)][codacy]
+-->
 
 <!--
 develop-branch (alias nightly)
 
 [![GH Action CI/CD](https://github.com/D3strukt0r/craftcms-blueprint/workflows/CI/CD/badge.svg?branch=develop)][gh-action]
-[![Codacy grade](https://img.shields.io/codacy/grade/96966fb63138492e9657bafc6adefa2b/develop)][codacy]
+[![Codacy grade](https://img.shields.io/codacy/grade/{id}/develop)][codacy]
 -->
 
 ## Getting Started
@@ -58,26 +60,6 @@ until finished
 
 End with an example of getting some data out of the system or using it for a little demo
 
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
 ## Deployment
 
 Add additional notes about how to deploy this on a live system
@@ -96,7 +78,7 @@ Please read [CODE_OF_CONDUCT.md](.github/CODE_OF_CONDUCT.md) for details on our 
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/D3strukt0r/craftcms-blueprint/tags).
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository][gh-tags].
 
 ## Authors
 
@@ -104,7 +86,7 @@ All the authors can be seen in the [AUTHORS.md](.github/AUTHORS.md) file.
 
 Contributors can be seen in the [CONTRIBUTORS.md](.github/CONTRIBUTORS.md) file.
 
-See also the full list of [contributors](https://github.com/D3strukt0r/craftcms-blueprint/contributors) who participated in this project.
+See also the full list of [contributors][gh-contributors] who participated in this project.
 
 ## License
 
@@ -117,4 +99,6 @@ A list of used libraries and code with their licenses can be seen in the [ACKNOW
 [docker-nginx]: https://hub.docker.com/repository/docker/d3strukt0r/craftcms-blueprint-nginx
 [docker-php]: https://hub.docker.com/repository/docker/d3strukt0r/craftcms-blueprint-php
 [gh-action]: https://github.com/D3strukt0r/craftcms-blueprint/actions
+[gh-tags]: https://github.com/D3strukt0r/craftcms-blueprint/tags
+[gh-contributors]: https://github.com/D3strukt0r/craftcms-blueprint/contributors
 [codacy]: https://www.codacy.com/manual/D3strukt0r/craftcms-blueprint
