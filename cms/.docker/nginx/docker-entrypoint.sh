@@ -135,7 +135,7 @@ if [[ $1 == 'nginx' ]]; then
         ln -sf /certs/website.key /etc/ssl/certs/website.key
 
         entrypoint_note 'Enabling HTTPS for nginx ...'
-        if [[ ! -f /etc/nginx/conf.d/default-ssl.conf ]]; then
+        if [[ ! -f /etc/nginx/http.d/default-ssl.conf ]]; then
             # shellcheck disable=SC2016,SC2046
             envsubst "$(printf '${%s} ' $(compgen -A variable))" </etc/nginx/http.d/default-ssl.template >/etc/nginx/http.d/default-ssl.conf
         fi
