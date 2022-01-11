@@ -2,6 +2,8 @@ services:
   redis:
     image: redis:latest
     command: redis-server --appendonly yes --requirepass redisPassword
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
     volumes:
       - redis-dev:/data
 

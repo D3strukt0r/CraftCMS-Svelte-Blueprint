@@ -188,7 +188,7 @@ STOPSIGNAL SIGQUIT
 
 EXPOSE 80
 
-HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 CMD curl --fail http://127.0.0.1/ || exit 1
+HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 CMD curl --fail http://127.0.0.1 || exit 1
 
 COPY .docker/nginx/docker-entrypoint.sh /usr/bin/docker-entrypoint
 RUN set -o errexit -o nounset -o pipefail -o xtrace; \

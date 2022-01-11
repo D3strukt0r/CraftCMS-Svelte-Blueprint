@@ -192,7 +192,18 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,macos,dotenv,windows,phpstorm,visualstudiocode
 
-### Other ###
-/docker-compose.yml
-/docker-compose.*.yml
-/Makefile
+### Vagrant ###
+!.vagrant/
+
+.vagrant/*
+!.vagrant/Dockerfile
+!.vagrant/provision.sh
+
+.vagrant-settings.yml
+
+### Docker ###
+docker-compose.yml
+docker-compose.*.yml
+
+### Make ###
+Makefile

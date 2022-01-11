@@ -1,0 +1,34 @@
+vm:
+  name: 'CraftCMS Blueprint'
+  cpus: 2
+  memory: 2048
+
+network:
+  # IP range "192.168.56.1 - 192.168.63.254" is allowed. (Don't use .1 in case
+  # it's used by a router.
+  ip: 192.168.56.2
+  # Use .test TLD for local development, and specifically not .local on macOS
+  # since conflicts with Bonjour can lead to performance issues(opens new window).
+  hostname: 'craftcms-blueprint.test'
+  #aliases: []
+
+folder:
+  # NFS folders do not work on Windows hosts. Vagrant will ignore your request
+  # for NFS synced folders on Windows.
+  # To avoid having to enter sudo password every time you run vagrant up,
+  # follow guide on:
+  # https://www.vagrantup.com/docs/synced-folders/nfs#root-privilege-requirement
+  type: 'nfs'
+  rsync:
+    exclude:
+      - '.git/'
+      - '.github/'
+      - '.idea/'
+      - '.DS_Store'
+      - '.editorconfig'
+      - '.gitattributes'
+      - '.gitignore'
+      - '.vagrant-settings.yml'
+      - 'CHANGELOG.md'
+      - 'LICENSE.md'
+      - 'README.md'

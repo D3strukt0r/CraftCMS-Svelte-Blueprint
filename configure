@@ -133,6 +133,7 @@ if [[ -x "$(command -v docker)" ]]; then
 else
     has_missing_requirement=true
     log_error 'docker is not installed. Please visit https://docs.docker.com/get-docker/'
+    log_error 'On MacOS run: "brew install docker"'
 fi
 
 if [[ -x "$(command -v docker-compose)" ]]; then
@@ -140,6 +141,7 @@ if [[ -x "$(command -v docker-compose)" ]]; then
 else
     has_missing_requirement=true
     log_error 'docker-compose is not installed. Please visit https://docs.docker.com/compose/install/'
+    log_error 'On MacOS run: "brew install docker-compose"'
 fi
 
 if [[ -x "$(command -v make)" ]]; then
@@ -147,6 +149,9 @@ if [[ -x "$(command -v make)" ]]; then
 else
     has_missing_requirement=true
     log_error 'make is not installed. Please visit https://www.gnu.org/software/make/'
+    log_error 'On MacOS run: "brew install make"'
+    # shellcheck disable=SC2016
+    log_error 'Then add "PATH="/usr/local/opt/make/libexec/gnubin:$PATH"" to your ~/.zshrc'
 fi
 
 if [[ -x "$(command -v yq)" ]]; then
@@ -154,6 +159,7 @@ if [[ -x "$(command -v yq)" ]]; then
 else
     has_missing_requirement=true
     log_error 'yq is not installed. Please visit https://github.com/mikefarah/yq'
+    log_error 'On MacOS run: "brew install yq"'
 fi
 
 if [[ $has_missing_requirement == true ]]; then
@@ -187,14 +193,27 @@ fi
 
 # -----------------------------------------------------------------------------
 
-yq merge \
+# Copy .vagrant-settings.yml
+cp .vagrant-settings.yml.dist .vagrant-settings.yml
+return_copy_vagrant_settings=$?
+
+if (( return_copy_vagrant_settings == 0 )); then
+    log_success '.vagrant-settings.yml created'
+else
+    log_error 'Failed at creating .vagrant-settings.yml'
+fi
+
+# Copy docker-compose.yml
+# shellcheck disable=SC2016
+yq eval-all '. as $item ireduce ({}; . * $item )' \
     .docker/docker-compose.common.yml \
     cms/.docker/docker-compose.db-$PREFERRED_DB_TYPE.yml \
     cms/.docker/docker-compose.dev.yml \
     pwa/.docker/docker-compose.dev.yml \
     --prettyPrint --indent 2 >docker-compose.yml
 return_copy_docker_dev=$?
-yq merge \
+# shellcheck disable=SC2016
+yq eval-all '. as $item ireduce ({}; . * $item )' \
     .docker/docker-compose.common.yml \
     cms/.docker/docker-compose.db-$PREFERRED_DB_TYPE.yml \
     cms/.docker/docker-compose.prod.yml \
@@ -209,6 +228,7 @@ else
     exit 1
 fi
 
+# Copy Makefile
 cp Makefile.in Makefile
 return_copy_make=$?
 
@@ -218,6 +238,7 @@ else
     log_error 'Failed at creating Makefile'
 fi
 
+# Copy .env
 if [[ ! -f .env && -f .env.dist ]]; then
     cp .env.dist .env
     return_copy_dotenv=$?
