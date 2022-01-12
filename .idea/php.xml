@@ -286,7 +286,7 @@
       <path value="$PROJECT_DIR$/cms/vendor/psr/event-dispatcher" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.0">
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.1">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
 </project>

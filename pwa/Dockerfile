@@ -96,7 +96,7 @@ FROM base-node AS base-node-dev
 
 EXPOSE 3000
 
-CMD ["yarn", "run", "start"]
+CMD ["yarn", "run", "dev"]
 
 # -----------------------------------------------------------------------------
 # Install vendors and build application
