@@ -193,14 +193,14 @@ fi
 
 # -----------------------------------------------------------------------------
 
-# Copy .vagrant-settings.yml
-cp .vagrant-settings.yml.dist .vagrant-settings.yml
+# Copy .vagrant.config.yml
+cp .vagrant.config.yml.dist .vagrant.config.yml
 return_copy_vagrant_settings=$?
 
 if (( return_copy_vagrant_settings == 0 )); then
-    log_success '.vagrant-settings.yml created'
+    log_success '.vagrant.config.yml created'
 else
-    log_error 'Failed at creating .vagrant-settings.yml'
+    log_error 'Failed at creating .vagrant.config.yml'
 fi
 
 # Copy docker-compose.yml

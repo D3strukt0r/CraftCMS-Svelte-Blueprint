@@ -199,7 +199,7 @@ $RECYCLE.BIN/
 !.vagrant/Dockerfile
 !.vagrant/provision.sh
 
-.vagrant-settings.yml
+.vagrant.config.yml
 
 ### Docker ###
 docker-compose.yml

@@ -28,7 +28,7 @@ folder:
       - '.editorconfig'
       - '.gitattributes'
       - '.gitignore'
-      - '.vagrant-settings.yml'
+      - '.vagrant.config.yml'
       - 'CHANGELOG.md'
       - 'LICENSE.md'
       - 'README.md'

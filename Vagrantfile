@@ -49,7 +49,7 @@ Vagrant.configure('2') do |config|
     # --------------------------------------------------------------------------
     # Load configuration
     # --------------------------------------------------------------------------
-    settings = YAML.load(File.read('.vagrant-settings.yml'))
+    settings = YAML.load(File.read('.vagrant.config.yml'))
 
     # --------------------------------------------------------------------------
     # Configure the machine
