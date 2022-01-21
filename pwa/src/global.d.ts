@@ -1,1 +1,1 @@
-/// <reference types="@sveltejs/kit" />
+ya/// <reference types="@sveltejs/kit" />
