@@ -35,10 +35,10 @@ Vagrant.configure('2') do |config|
     end
     # A Vagrant provisioner for Docker Compose. Installs Docker Compose and can
     # also bring up the containers defined by a docker-compose.yml.
-    unless Vagrant.has_plugin?('vagrant-docker-compose')
-        system('vagrant plugin install vagrant-docker-compose')
-        plugins_installed = true
-    end
+    # unless Vagrant.has_plugin?('vagrant-docker-compose')
+    #     system('vagrant plugin install vagrant-docker-compose')
+    #     plugins_installed = true
+    # end
 
     # For plugins to be detected by vagrant, 'vagrant up' must be rerun.
     if plugins_installed
@@ -54,7 +54,7 @@ Vagrant.configure('2') do |config|
     # --------------------------------------------------------------------------
     # Configure the machine
     # --------------------------------------------------------------------------
-    config.vm.box = 'bento/ubuntu-21.04'
+    config.vm.box = 'bento/ubuntu-21.10'
 
     config.vm.provider 'virtualbox' do |v|
         # Set the name to show in the GUI
@@ -72,6 +72,9 @@ Vagrant.configure('2') do |config|
         if settings and settings['vm'] and settings['vm']['memory']
             v.memory = settings['vm']['memory']
         end
+
+        # See http://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working?rq=1
+        v.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
     end
 
     # --------------------------------------------------------------------------
@@ -140,10 +143,47 @@ Vagrant.configure('2') do |config|
 
     config.vm.provision 'setup-ssh', type: 'shell', inline: '/tmp/provision.sh setup-ssh'
 
-    #config.vm.provision :docker
-    #config.vm.provision 'install-docker', type: 'shell', inline: '/tmp/provision.sh install-docker'
-    #config.vm.provision :docker_compose, yml: '/vagrant/docker-compose.yml', run: 'always'
-    #config.vm.provision 'install-docker-compose', type: 'shell', inline: '/tmp/provision.sh install-docker-compose'
+    # config.vm.provision :docker
+    # config.vm.provision :docker_compose, yml: '/vagrant/docker-compose.yml', run: 'always'
+    config.vm.provision 'install-docker', type: 'shell', inline: '/tmp/provision.sh install-docker'
+    config.vm.provision 'install-docker-compose', type: 'shell', inline: '/tmp/provision.sh install-docker-compose'
+
+    class DockerUsername
+        def to_s
+            print "Please enter your Docker credentials (the same as for dockerhub.com)\n"
+            print 'Username: '
+            STDIN.gets.chomp
+        end
+    end
+    class DockerPassword
+        def to_s
+            begin
+                system 'stty -echo'
+                print 'Password: '
+                map = {'"' => '%22', '#' => '%23', '^' => '25%5E' }
+                re = Regexp.new(map.keys.map { |x| Regexp.escape(x) }.join('|'))
+                pass = STDIN.gets.chomp.gsub(re, map)
+            ensure
+                system 'stty echo'
+            end
+            pass
+        end
+    end
+    config.vm.provision 'docker-login', type: 'shell', env: { 'USERNAME' => DockerUsername.new, 'PASSWORD' => DockerPassword.new }, inline: '/tmp/provision.sh docker-login'
+
+    config.vm.provision 'cd-to-project', type: 'shell', inline: '/tmp/provision.sh cd-to-project'
 
     config.vm.provision 'shell', inline: 'rm /tmp/provision.sh'
+    config.vm.post_up_message = 'Machine is ready.'
+
+    config.trigger.after :up do |trigger|
+        trigger.name = 'Start Containers'
+        trigger.info = 'Starting Docker containers...'
+        trigger.run_remote = { inline: 'cd /vagrant; docker-compose up' }
+    end
+    config.trigger.before :halt do |trigger|
+        trigger.name = 'Stop Containers'
+        trigger.info = 'Stopping Docker containers...'
+        trigger.run_remote = { inline: 'cd /vagrant; docker-compose down' }
+    end
 end
