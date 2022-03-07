@@ -1,5 +1,5 @@
 vm:
-  name: 'CraftCMS Blueprint'
+  name: 'CraftCMS Svelte Blueprint'
   cpus: 2
   memory: 2048
 
@@ -9,7 +9,7 @@ network:
   ip: 192.168.56.2
   # Use .test TLD for local development, and specifically not .local on macOS
   # since conflicts with Bonjour can lead to performance issues(opens new window).
-  hostname: 'craftcms-blueprint.test'
+  hostname: 'craftcms-svelte-blueprint.test'
   #aliases: []
 
 folder:

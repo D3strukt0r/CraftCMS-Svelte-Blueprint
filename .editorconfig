@@ -24,7 +24,8 @@ indent_size = 4
 # space: {indent_size} per indentation level
 indent_style = space
 
-# Whether to ensure there's always a single end of line sequence at the end of the file for compatibility of some utilities
+# Whether to ensure there's always a single end of line sequence at the end of
+# the file for compatibility of some utilities
 insert_final_newline = true
 
 # Whether to trim out the (unnecessary) trailing whitespace(s) of the line
@@ -41,11 +42,11 @@ ij_visual_guides = 80,120
 ij_wrap_on_typing = false
 
 [.git/**]
-# Avoid git patch fail to apply due to the stripped unmodified lines that contains only spaces, which also matches as "trailing spaces"
+# Avoid git patch fail to apply due to the stripped unmodified lines that
+# contains only spaces, which also matches as "trailing spaces"
 trim_trailing_whitespace = false
 
 [*.css]
-# ij_visual_guides = none
 ij_css_align_closing_brace_with_properties = false
 ij_css_blank_lines_around_nested_selector = 1
 ij_css_blank_lines_between_blocks = 1
@@ -66,7 +67,6 @@ ij_css_value_alignment = do_not_align
 
 [*.scss]
 ij_continuation_indent_size = 4
-# ij_visual_guides = none
 ij_scss_align_closing_brace_with_properties = false
 ij_scss_blank_lines_around_nested_selector = 1
 ij_scss_blank_lines_between_blocks = 1
@@ -86,14 +86,12 @@ ij_scss_use_double_quotes = true
 ij_scss_value_alignment = 0
 
 [*.twig]
-# ij_visual_guides = none
 ij_twig_keep_indents_on_empty_lines = false
 ij_twig_spaces_inside_comments_delimiters = true
 ij_twig_spaces_inside_delimiters = true
 ij_twig_spaces_inside_variable_delimiters = true
 
 [.editorconfig]
-# ij_visual_guides = none
 ij_editorconfig_align_group_field_declarations = false
 ij_editorconfig_space_after_colon = false
 ij_editorconfig_space_after_comma = true
@@ -102,7 +100,6 @@ ij_editorconfig_space_before_comma = false
 ij_editorconfig_spaces_around_assignment_operators = true
 
 [{*.ant,*.fxml,*.jhm,*.jnlp,*.jrxml,*.rng,*.tld,*.wsdl,*.xml,*.xsd,*.xsl,*.xslt,*.xul,phpunit.xml.dist}]
-# ij_visual_guides = none
 ij_xml_align_attributes = true
 ij_xml_align_text = false
 ij_xml_attribute_wrap = off
@@ -122,7 +119,6 @@ ij_xml_text_wrap = normal
 
 [{*.ats,*.ts}]
 ij_continuation_indent_size = 4
-# ij_visual_guides = none
 ij_typescript_align_imports = false
 ij_typescript_align_multiline_array_initializer_expression = false
 ij_typescript_align_multiline_binary_operation = false
@@ -290,7 +286,6 @@ ij_typescript_while_on_new_line = false
 ij_typescript_wrap_comments = false
 
 [{*.bash,*.sh,*.zsh}]
-# ij_visual_guides = none
 ij_shell_binary_ops_start_line = false
 ij_shell_keep_column_alignment_padding = false
 ij_shell_minify_program = false
@@ -303,7 +298,6 @@ end_of_line = crlf
 
 [{*.cjs,*.js}]
 ij_continuation_indent_size = 4
-# ij_visual_guides = none
 ij_javascript_align_imports = false
 ij_javascript_align_multiline_array_initializer_expression = false
 ij_javascript_align_multiline_binary_operation = false
@@ -469,7 +463,6 @@ ij_javascript_wrap_comments = true
 
 [{*.ctp,*.hphp,*.inc,*.module,*.php,*.php4,*.php5,*.phtml}]
 ij_continuation_indent_size = 4
-# ij_visual_guides = none
 ij_php_align_assignments = false
 ij_php_align_class_constants = false
 ij_php_align_group_field_declarations = false
@@ -684,7 +677,6 @@ ij_php_while_on_new_line = false
 
 [{*.har,*.jsb2,*.jsb3,*.json,.babelrc,.eslintrc,.stylelintrc,bowerrc,composer.lock,jest.config}]
 # indent_size = 2
-# ij_visual_guides = none
 ij_json_keep_blank_lines_in_code = 0
 ij_json_keep_indents_on_empty_lines = false
 ij_json_keep_line_breaks = true
@@ -700,7 +692,6 @@ ij_json_wrap_long_lines = false
 # indent_size = 4
 
 [{*.htm,*.html,*.ng,*.sht,*.shtm,*.shtml}]
-# ij_visual_guides = none
 ij_html_add_new_line_before_tags = body,div,p,form,h1,h2,h3
 ij_html_align_attributes = true
 ij_html_align_text = true
@@ -732,7 +723,6 @@ ij_html_uniform_ident = false
 # Trailing whitespace means manual linebreaks in Markdown thus is not trimmable
 trim_trailing_whitespace = false
 
-# ij_visual_guides = none
 ij_markdown_force_one_space_after_blockquote_symbol = true
 ij_markdown_force_one_space_after_header_symbol = true
 ij_markdown_force_one_space_after_list_bullet = true
@@ -746,12 +736,10 @@ ij_markdown_min_lines_around_header = 1
 ij_markdown_min_lines_between_paragraphs = 1
 
 [{*.mk,GNUmakefile,makefile}]
-# ij_visual_guides = none
 indent_style = tab
 
 [*.{yaml,yml,yml.dist}]
 indent_size = 2
-# ij_visual_guides = none
 ij_yaml_align_values_properties = do_not_align
 ij_yaml_autoinsert_sequence_marker = true
 ij_yaml_block_mapping_on_new_line = false

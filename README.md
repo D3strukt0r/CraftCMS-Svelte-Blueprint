@@ -9,7 +9,7 @@ Project
 [![Docker Pulls](https://img.shields.io/docker/pulls/d3strukt0r/craftcms-blueprint-nginx.svg?label=docker%20pulls%20(nginx))][docker-nginx]
 [![Docker Stars](https://img.shields.io/docker/stars/d3strukt0r/craftcms-blueprint-php.svg?label=docker%20stars%20(php))][docker-php]
 [![Docker Pulls](https://img.shields.io/docker/pulls/d3strukt0r/craftcms-blueprint-php.svg?label=docker%20pulls%20(php))][docker-php]
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](.github/CODE_OF_CONDUCT.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
 main-branch (alias stable, latest)
 
@@ -74,7 +74,7 @@ Add additional notes about how to deploy this on a live system
 
 ## Contributing
 
-Please read [CODE_OF_CONDUCT.md](.github/CODE_OF_CONDUCT.md) for details on our code of conduct, and [CONTRIBUTING.md](.github/CONTRIBUTING.md) for the process for submitting pull requests to us.
+Please read [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for details on our code of conduct, and [CONTRIBUTING.md](CONTRIBUTING.md) for the process for submitting pull requests to us.
 
 ## Versioning
 
@@ -82,9 +82,9 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-All the authors can be seen in the [AUTHORS.md](.github/AUTHORS.md) file.
+All the authors can be seen in the [AUTHORS.md](AUTHORS.md) file.
 
-Contributors can be seen in the [CONTRIBUTORS.md](.github/CONTRIBUTORS.md) file.
+Contributors can be seen in the [CONTRIBUTORS.md](CONTRIBUTORS.md) file.
 
 See also the full list of [contributors][gh-contributors] who participated in this project.
 
@@ -94,11 +94,11 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-A list of used libraries and code with their licenses can be seen in the [ACKNOWLEDGMENTS.md](.github/ACKNOWLEDGMENTS.md) file.
+A list of used libraries and code with their licenses can be seen in the [ACKNOWLEDGMENTS.md](ACKNOWLEDGMENTS.md) file.
 
 [docker-nginx]: https://hub.docker.com/repository/docker/d3strukt0r/craftcms-blueprint-nginx
 [docker-php]: https://hub.docker.com/repository/docker/d3strukt0r/craftcms-blueprint-php
-[gh-action]: https://github.com/D3strukt0r/craftcms-blueprint/actions
-[gh-tags]: https://github.com/D3strukt0r/craftcms-blueprint/tags
-[gh-contributors]: https://github.com/D3strukt0r/craftcms-blueprint/contributors
-[codacy]: https://www.codacy.com/manual/D3strukt0r/craftcms-blueprint
+[gh-action]: https://github.com/D3strukt0r/CraftCMS-Svelte-Blueprint/actions
+[gh-tags]: https://github.com/D3strukt0r/CraftCMS-Svelte-Blueprint/tags
+[gh-contributors]: https://github.com/D3strukt0r/CraftCMS-Svelte-Blueprint/contributors
+[codacy]: https://www.codacy.com/manual/D3strukt0r/CraftCMS-Svelte-Blueprint

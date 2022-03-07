@@ -1,11 +1,15 @@
 {
     /* https://www.typescriptlang.org/tsconfig */
     "compilerOptions": {
-        // # Type Checking #
+        /*
+         * Type Checking
+         */
         "noFallthroughCasesInSwitch": true,
         "strict": true,
 
-        // # Modules #
+        /*
+         * Modules
+         */
         "baseUrl": ".",
         "module": "es2020",
         "moduleResolution": "node",
@@ -15,37 +19,43 @@
         },
         "resolveJsonModule": true,
 
-        // # Emit #
-        /**
-         * svelte-preprocess cannot figure out whether you have a value or a
-         * type, so tell TypeScript to enforce using `import type` instead of
-         * `import` for Types.
+        /*
+         * Emit
          */
+        // svelte-preprocess cannot figure out whether you have a value or a
+        // type, so tell TypeScript to enforce using `import type` instead of
+        // `import` for Types.
         "importsNotUsedAsValues": "error",
-        /**
-         * To have warnings/errors of the Svelte compiler at the correct
-         * position, enable source maps by default.
-         */
+        // To have warnings/errors of the Svelte compiler at the correct
+        // position, enable source maps by default.
         "sourceMap": true,
 
-        // # JavaScript Support #
+        /*
+         * JavaScript Support
+         */
         "allowJs": true,
         "checkJs": true,
 
-        // # Interop Constraints #
+        /*
+         * Interop Constraints
+         */
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": true,
 
-        // # Language and Environment #
+        /*
+         * Language and Environment
+         */
         "lib": [
             "ES2020",
             "DOM"
         ],
         "target": "es2020",
 
-        // # Completeness #
+        /*
+         * Completeness
+         */
         "skipLibCheck": true,
     },
     "include": [

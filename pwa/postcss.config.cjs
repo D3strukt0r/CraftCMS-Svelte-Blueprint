@@ -8,8 +8,8 @@ const dev = mode === 'development'
 const config = {
     plugins: [
         tailwindcss(), // first load TailwindCSS
-        autoprefixer(), // then run autoprefixer
-        !dev && // optimize the code for production
+        autoprefixer(), // ... then run autoprefixer
+        !dev && // Optimize the code for production
         cssnano({
             preset: 'default',
         }),
