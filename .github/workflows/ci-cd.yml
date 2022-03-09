@@ -1,1 +1,21 @@
 name: CI/CD
+
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "*.*.*"
+    paths:
+      - .github/workflows/ci-cd.yml
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          echo "Doing some CI/CD"
