@@ -76,7 +76,8 @@ usage() {
     echo 'Possible values for options:'
     echo '  -?|-h|--help           Opens help page'
     echo '  -q|--QUIET             Mutes notes'
-    echo '  -d|--db <mysql|pgsql>  Select db flavor'
+    echo '  -d|--db <mysql|pgsql>  Select db flavor (default: mysql)'
+    echo '  -f|--force             Force file overwriting'
 }
 
 # $@ is all command line parameters passed to the script.
@@ -84,12 +85,14 @@ usage() {
 # -l/--longoptions is for long options with double dash like --version
 # the comma separates different long options
 # -a/--alternative is for long options with single dash like -version
-PARSED_ARGUMENTS="$(getopt --options h?qd: --longoptions help,quiet,db: --alternative -- "$@" || { usage >&2 && false; })"
+PARSED_ARGUMENTS="$(getopt --options h?qdf: --longoptions help,quiet,db,force: --alternative -- "$@" || { usage >&2 && false; })"
 
 # set --:
 # If no arguments follow this option, then the positional parameters are unset. Otherwise, the positional parameters
 # are set to the arguments, even if some of them begin with a ‘-’.
 eval set -- "$PARSED_ARGUMENTS"
+
+PREFERRED_DB_TYPE='pgsql'
 
 while true; do
     case "$1" in
@@ -104,6 +107,11 @@ while true; do
         -d | --db)
             PREFERRED_DB_TYPE="$2"
             shift 2
+            ;;
+        -f | --force)
+            echo 'Setting force=true'
+            FORCE="true"
+            shift
             ;;
         # -- means the end of the arguments; drop this, and break out of the while loop
         --)
@@ -130,18 +138,21 @@ has_missing_requirement=false
 
 if [[ -x "$(command -v docker)" ]]; then
     log_success 'docker is installed'
+
+    if [[ -x "$(command -v docker-compose)" ]]; then
+        log_success 'docker-compose is installed'
+    else
+        has_missing_requirement=true
+        log_error 'docker-compose is not installed. Please visit https://docs.docker.com/compose/install/'
+        log_error 'On MacOS run: "brew install docker-compose"'
+    fi
+elif [[ -x "$(command -v vagrant)" ]]; then
+    log_warning 'docker is not installed. vagrant will be used instead'
+    log_success 'vagrant is installed'
 else
     has_missing_requirement=true
     log_error 'docker is not installed. Please visit https://docs.docker.com/get-docker/'
     log_error 'On MacOS run: "brew install docker"'
-fi
-
-if [[ -x "$(command -v docker-compose)" ]]; then
-    log_success 'docker-compose is installed'
-else
-    has_missing_requirement=true
-    log_error 'docker-compose is not installed. Please visit https://docs.docker.com/compose/install/'
-    log_error 'On MacOS run: "brew install docker-compose"'
 fi
 
 if [[ -x "$(command -v make)" ]]; then
@@ -194,14 +205,33 @@ fi
 # -----------------------------------------------------------------------------
 
 # Copy .vagrant.config.yml
-cp .vagrant.config.yml.dist .vagrant.config.yml
-return_copy_vagrant_settings=$?
+if [[ ! -f .vagrant.config.yml ]]; then
+    cp .vagrant.config.yml.dist .vagrant.config.yml
+    return_copy_vagrant_settings=$?
 
-if (( return_copy_vagrant_settings == 0 )); then
-    log_success '.vagrant.config.yml created'
+    if (( return_copy_vagrant_settings == 0 )); then
+        log_success '.vagrant.config.yml created'
+    else
+        log_error 'Failed at creating .vagrant.config.yml'
+    fi
 else
-    log_error 'Failed at creating .vagrant.config.yml'
+    echo $FORCE
+    if [[ -n ${FORCE+x} && $FORCE == 'true' ]]; then
+        log_warning 'Found .vagrant.config.yml. Force flag is set. Overwriting .vagrant.config.yml.'
+        cp .vagrant.config.yml.dist .vagrant.config.yml
+        return_copy_vagrant_settings=$?
+
+        if (( return_copy_vagrant_settings == 0 )); then
+            log_success '.vagrant.config.yml created'
+        else
+            log_error 'Failed at creating .vagrant.config.yml'
+        fi
+    else
+        log_warning 'Found .vagrant.config.yml. Force flag is not set. Skipping .vagrant.config.yml.'
+    fi
 fi
+
+exit 0
 
 # Copy docker-compose.yml
 # shellcheck disable=SC2016
